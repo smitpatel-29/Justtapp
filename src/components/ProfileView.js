@@ -243,14 +243,64 @@ END:VCARD`;
     return Globe;
   };
 
-  // Generate a consistent gradient if no coverImage
+  // Theme Logic
+  const theme = client.theme || "dark";
+  const customTheme = client.customTheme || {};
+
   const defaultGradient = `linear-gradient(135deg, hsl(${client.name.length * 20}, 70%, 50%), hsl(${client.name.length * 20 + 40}, 80%, 60%))`;
   const coverStyle = client.coverImage
     ? { backgroundImage: `url(${client.coverImage})` }
     : { background: defaultGradient };
 
+  const getThemeStyles = () => {
+    const baseStyles = {};
+
+    if (theme === "light") {
+      return {
+        "--background": "#f1f5f9",
+        "--container-bg": "white",
+        "--text-primary": "#0f172a",
+        "--text-secondary": "#64748b",
+        "--card-bg": "#e2e8f0",
+        "--card-hover": "#cbd5e1",
+        "--button-text": "white",
+        "--header-gradient-end": "rgba(255,255,255,1)",
+      };
+    } else if (theme === "blue") {
+      return {
+        "--background": "#0f172a",
+        "--container-bg": "linear-gradient(to bottom, #1e3a8a, #172554)",
+        "--text-primary": "white",
+        "--text-secondary": "#bfdbfe",
+        "--card-bg": "rgba(255,255,255,0.1)",
+        "--card-hover": "rgba(255,255,255,0.2)",
+        "--header-gradient-end": "rgba(30, 58, 138, 0)",
+      };
+    } else if (theme === "custom") {
+      return {
+        "--background": customTheme.background || "#0f172a",
+        "--container-bg": customTheme.containerBg || "#0f172a",
+        "--text-primary": customTheme.textPrimary || "white",
+        "--text-secondary": customTheme.textSecondary || "#94a3b8",
+        "--card-bg": customTheme.cardBg || "rgba(255,255,255,0.05)",
+        "--accent-color": customTheme.accentColor || "#60a5fa",
+        "--button-bg": customTheme.buttonBg || "#3b82f6",
+        "--header-gradient-end": "rgba(0,0,0,0)",
+      };
+    }
+    // Default Dark
+    return {
+      "--background": "#0f172a",
+      "--container-bg": "#000000",
+      "--text-primary": "white",
+      "--text-secondary": "#94a3b8",
+      "--card-bg": "rgba(255,255,255,0.05)",
+      "--header-gradient-end": "rgba(0,0,0,1)",
+    };
+  };
+
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} style={getThemeStyles()}>
       <div className={styles.mobileContainer}>
         {/* Header Section */}
         <header className={styles.header}>

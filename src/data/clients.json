@@ -5,7 +5,7 @@
     "title": "Senior Developer",
     "company": "Tech Solutions Inc.",
     "bio": "Passionate about building scalable web applications and exploring new technologies.",
-    "avatar": "https://ui-avatars.com/api/?name=Alex+Johnson&background=0D8ABC&color=fff",
+    "avatar": "/uploads/1771247096988-coverimage.jpeg",
     "coverImage": "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&w=1000&q=80",
     "email": "alex@example.com",
     "address": "123 Business Park, Tech City, TC 50001",
@@ -15,18 +15,26 @@
       {
         "platform": "LinkedIn",
         "url": "#"
-      },
-      {
-        "platform": "Twitter",
-        "url": "#"
-      },
-      {
-        "platform": "GitHub",
-        "url": "#"
       }
     ],
     "nfcId": "nfc-001",
-    "password": "password"
+    "password": "password",
+    "theme": "dark",
+    "customTheme": {
+      "background": "#0f172a",
+      "textPrimary": "#ffffff",
+      "accentColor": "#60a5fa",
+      "buttonBg": "#3b82f6"
+    },
+    "linkedin": "#",
+    "instagram": "",
+    "facebook": "",
+    "youtube": "",
+    "whatsapp": "",
+    "telegram": "",
+    "tiktok": "",
+    "snapchat": "",
+    "map": ""
   },
   {
     "id": "2",
@@ -78,7 +86,7 @@
     ],
     "nfcId": "nfc-002",
     "password": "password",
-    "coverImage": "https://www.google.com/imgres?q=car%20image&imgurl=https%3A%2F%2Fimg.freepik.com%2Ffree-photo%2Fblurred-motion-shiny-luxury-illuminated-night-drive-generative-ai_188544-46185.jpg%3Fsemt%3Dais_user_personalization%26w%3D740%26q%3D80&imgrefurl=https%3A%2F%2Fwww.freepik.com%2Ffree-photos-vectors%2Fpowerful-car&docid=S2OBm1iDBDWXTM&tbnid=vLwn389ECcpc7M&vet=12ahUKEwjM5qeGhN6SAxXjZvUHHZ7PMTMQnPAOegQIJxAB..i&w=740&h=423&hcb=2&ved=2ahUKEwjM5qeGhN6SAxXjZvUHHZ7PMTMQnPAOegQIJxAB",
+    "coverImage": "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&w=1000&q=80",
     "address": "",
     "linkedin": "https://sarah.design",
     "instagram": "https://sarah.design",
@@ -88,6 +96,13 @@
     "telegram": "https://sarah.design",
     "tiktok": "https://sarah.design",
     "snapchat": "https://sarah.design",
-    "map": "https://sarah.design"
+    "map": "https://sarah.design",
+    "theme": "dark",
+    "customTheme": {
+      "background": "#0f172a",
+      "textPrimary": "#ffffff",
+      "accentColor": "#60a5fa",
+      "buttonBg": "#3b82f6"
+    }
   }
 ]

@@ -8,7 +8,7 @@
 }
 
 .mobileContainer {
-  background: black;
+  background: var(--container-bg, black);
   width: 100%;
   max-width: 480px;
   min-height: 90vh;
@@ -18,6 +18,7 @@
   box-shadow:
     0 40px 80px -20px rgba(0, 0, 0, 0.5),
     inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  color: var(--text-primary, white);
 }
 
 .header {
@@ -26,7 +27,7 @@
   background: linear-gradient(
     to bottom,
     rgba(20, 20, 30, 0),
-    var(--background)
+    var(--header-gradient-end, rgba(0, 0, 0, 0))
   );
 }
 
@@ -38,33 +39,10 @@
   background-position: center;
 }
 
-.qrBtn {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: white;
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: transform 0.2s;
-  z-index: 10;
-}
-
-.qrBtn:active {
-  transform: scale(0.9);
-}
-
+.qrBtn,
 .langBtn {
   position: absolute;
   top: 20px;
-  left: 20px;
   background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -80,11 +58,18 @@
   z-index: 10;
 }
 
+.qrBtn {
+  right: 20px;
+}
+.langBtn {
+  left: 20px;
+}
+
+.qrBtn:active,
 .langBtn:active {
   transform: scale(0.9);
 }
 
-/* Language Menu */
 /* Language Menu - Bottom Sheet Style */
 .langMenuOverlay {
   position: absolute;
@@ -96,7 +81,7 @@
   backdrop-filter: blur(4px);
   z-index: 100;
   display: flex;
-  align-items: flex-end; /* Align to bottom */
+  align-items: flex-end;
   justify-content: center;
   animation: fadeIn 0.2s;
 }
@@ -104,9 +89,9 @@
 .langMenu {
   background: #1e293b;
   width: 100%;
-  max-height: 60vh; /* Limit height */
+  max-height: 60vh;
   overflow-y: auto;
-  border-radius: 24px 24px 0 0; /* Top corners rounded */
+  border-radius: 24px 24px 0 0;
   padding: 1.5rem;
   padding-bottom: 2rem;
   display: flex;
@@ -143,7 +128,6 @@
 .langOption:hover {
   background: rgba(255, 255, 255, 0.1);
 }
-
 .activeLang {
   background: #3b82f6;
   border-color: #3b82f6;
@@ -167,7 +151,7 @@
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  border: 4px solid black; /* Matches bg */
+  border: 4px solid var(--container-bg, black);
   object-fit: cover;
   background: #1e293b;
 }
@@ -176,7 +160,7 @@
   position: absolute;
   bottom: 5px;
   right: 5px;
-  background: black;
+  background: var(--container-bg, black);
   border-radius: 50%;
   padding: 2px;
   display: flex;
@@ -192,25 +176,23 @@
   font-size: 1.75rem;
   font-weight: 800;
   margin-bottom: 0.25rem;
-  color: white;
+  color: var(--text-primary, white);
   letter-spacing: -0.02em;
 }
 
 .title {
-  color: #94a3b8;
+  color: var(--text-secondary, #94a3b8);
   font-size: 1rem;
   font-weight: 500;
 }
-
 .company {
-  color: #60a5fa;
+  color: var(--accent-color, #60a5fa);
   font-size: 0.9rem;
   font-weight: 600;
   margin-bottom: 0.75rem;
 }
-
 .bio {
-  color: #cbd5e1;
+  color: var(--text-tertiary, #cbd5e1);
   font-size: 0.95rem;
   line-height: 1.5;
   margin-top: 0.5rem;
@@ -225,8 +207,8 @@
 
 .primaryBtn {
   flex: 1;
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-  color: white;
+  background: var(--button-bg, linear-gradient(135deg, #3b82f6, #8b5cf6));
+  color: var(--button-text, white);
   border: none;
   padding: 1rem;
   border-radius: 16px;
@@ -249,10 +231,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--card-bg, rgba(255, 255, 255, 0.08));
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 14px;
-  color: white;
+  color: var(--text-primary, white);
   cursor: pointer;
   transition: transform 0.2s;
 }
@@ -274,7 +256,7 @@
   text-transform: uppercase;
   font-size: 0.75rem;
   font-weight: 700;
-  color: #64748b;
+  color: var(--text-secondary, #64748b);
   letter-spacing: 0.1em;
   margin-bottom: -1rem;
   padding-left: 0.5rem;
@@ -287,8 +269,8 @@
 }
 
 .card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08); /* Minimal border */
+  background: var(--card-bg, rgba(255, 255, 255, 0.03));
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 20px;
   padding: 1rem;
   display: flex;
@@ -301,7 +283,7 @@
 }
 
 .card:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--card-hover, rgba(255, 255, 255, 0.06));
   transform: translateY(-2px);
 }
 
@@ -322,17 +304,15 @@
 
 .cardLabel {
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--text-secondary, #94a3b8);
   font-weight: 500;
 }
-
 .cardValue {
   font-size: 1rem;
-  color: white;
+  color: var(--text-primary, white);
   font-weight: 600;
 }
 
-/* Website Card Special Styling */
 .websiteCard {
   flex-direction: column;
   align-items: flex-start;
@@ -366,11 +346,10 @@
   justify-content: space-between;
   align-items: center;
   font-size: 0.85rem;
-  color: #cbd5e1;
+  color: var(--text-tertiary, #cbd5e1);
   border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* Social Grid */
 .socialGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
@@ -378,7 +357,7 @@
 }
 
 .socialCard {
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--card-bg, rgba(255, 255, 255, 0.03));
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 20px;
   padding: 1.5rem;
@@ -388,27 +367,25 @@
   justify-content: center;
   gap: 0.75rem;
   text-decoration: none;
-  color: white;
+  color: var(--text-primary, white);
   transition: all 0.2s;
-  aspect-ratio: 1; /* Square */
+  aspect-ratio: 1;
 }
 
 .socialCard:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--card-hover, rgba(255, 255, 255, 0.1));
   transform: translateY(-4px);
   border-color: rgba(255, 255, 255, 0.2);
 }
 
 .socialCard svg {
-  color: #e2e8f0;
+  color: var(--text-secondary, #e2e8f0);
   transition: transform 0.2s;
 }
-
 .socialCard:hover svg {
   transform: scale(1.1);
-  color: white;
+  color: var(--text-primary, white);
 }
-
 .socialCard span {
   font-size: 0.85rem;
   font-weight: 500;
@@ -421,13 +398,12 @@
   color: #64748b;
   font-size: 0.8rem;
 }
-
 .footer a {
   color: inherit;
   text-decoration: none;
 }
 
-/* Modal */
+/* Modal & Animations kept same */
 .modalOverlay {
   position: absolute;
   top: 0;
@@ -483,7 +459,6 @@
     opacity: 1;
   }
 }
-
 @keyframes scaleUp {
   from {
     transform: scale(0.9);

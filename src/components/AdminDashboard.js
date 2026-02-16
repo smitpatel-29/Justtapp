@@ -1,13 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Edit2, Trash2, ExternalLink, QrCode, X } from "lucide-react";
+import {
+  Plus,
+  Edit2,
+  Trash2,
+  ExternalLink,
+  QrCode,
+  X,
+  Image,
+} from "lucide-react";
 import styles from "./AdminDashboard.module.css";
+import MediaManager from "./MediaManager";
 
 export default function AdminDashboard({ initialClients }) {
   const [clients, setClients] = useState(initialClients);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingClient, setEditingClient] = useState(null);
+  const [showMediaLibrary, setShowMediaLibrary] = useState(false);
 
   const handleDelete = async (id) => {
     if (!confirm("Are you sure you want to delete this client?")) return;
@@ -78,14 +88,30 @@ export default function AdminDashboard({ initialClients }) {
             Admin Panel
           </h1>
         </div>
-        <button
-          className={`${styles.btn} ${styles.btnPrimary}`}
-          onClick={() => openModal()}
-        >
-          <Plus size={20} />
-          Add Client
-        </button>
+        <div style={{ display: "flex", gap: "1rem" }}>
+          <button
+            className={`${styles.btn} ${styles.btnPrimary}`}
+            onClick={() => setShowMediaLibrary(true)}
+            style={{ background: "rgba(255,255,255,0.1)" }}
+          >
+            <Image size={20} />
+            Media Library
+          </button>
+          <button
+            className={`${styles.btn} ${styles.btnPrimary}`}
+            onClick={() => openModal()}
+          >
+            <Plus size={20} />
+            Add Client
+          </button>
+        </div>
       </header>
+
+      {/* Main Media Manager Modal */}
+      <MediaManager
+        isOpen={showMediaLibrary}
+        onClose={() => setShowMediaLibrary(false)}
+      />
 
       <div className={styles.grid}>
         {clients.map((client) => (
@@ -166,6 +192,13 @@ function ClientForm({ client, onSave, onClose }) {
     coverImage: client?.coverImage || "",
     address: client?.address || "",
     nfcId: client?.nfcId || "",
+    theme: client?.theme || "dark",
+    customTheme: client?.customTheme || {
+      background: "#0f172a",
+      textPrimary: "#ffffff",
+      accentColor: "#60a5fa",
+      buttonBg: "#3b82f6",
+    },
     // Socials
     linkedin:
       client?.socials?.find((s) => s.platform === "LinkedIn")?.url || "",
@@ -211,6 +244,19 @@ function ClientForm({ client, onSave, onClose }) {
       socials,
     };
     onSave(payload);
+  };
+
+  const [showMedia, setShowMedia] = useState(false);
+  const [mediaTarget, setMediaTarget] = useState(null); // 'avatar' | 'coverImage' | null
+
+  const openMedia = (target) => {
+    setMediaTarget(target);
+    setShowMedia(true);
+  };
+
+  const handleMediaSelect = (url) => {
+    setFormData({ ...formData, [mediaTarget]: url });
+    setShowMedia(false);
   };
 
   return (
@@ -277,13 +323,24 @@ function ClientForm({ client, onSave, onClose }) {
 
           <div className={`${styles.inputGroup} ${styles.fullWidth}`}>
             <label className={styles.label}>Cover Image URL</label>
-            <input
-              name="coverImage"
-              value={formData.coverImage}
-              onChange={handleChange}
-              placeholder="https://..."
-              className={styles.input}
-            />
+            <div style={{ display: "flex", gap: "8px" }}>
+              <input
+                name="coverImage"
+                value={formData.coverImage}
+                onChange={handleChange}
+                placeholder="https://..."
+                className={styles.input}
+                style={{ flex: 1 }}
+              />
+              <button
+                type="button"
+                onClick={() => openMedia("coverImage")}
+                className={styles.btn}
+                style={{ padding: "0 1rem", background: "#334155" }}
+              >
+                <Image size={18} />
+              </button>
+            </div>
           </div>
 
           <div className={`${styles.inputGroup} ${styles.fullWidth}`}>
@@ -331,13 +388,24 @@ function ClientForm({ client, onSave, onClose }) {
 
           <div className={`${styles.inputGroup} ${styles.fullWidth}`}>
             <label className={styles.label}>Photo URL</label>
-            <input
-              name="avatar"
-              value={formData.avatar}
-              onChange={handleChange}
-              placeholder="https://..."
-              className={styles.input}
-            />
+            <div style={{ display: "flex", gap: "8px" }}>
+              <input
+                name="avatar"
+                value={formData.avatar}
+                onChange={handleChange}
+                placeholder="https://..."
+                className={styles.input}
+                style={{ flex: 1 }}
+              />
+              <button
+                type="button"
+                onClick={() => openMedia("avatar")}
+                className={styles.btn}
+                style={{ padding: "0 1rem", background: "#334155" }}
+              >
+                <Image size={18} />
+              </button>
+            </div>
           </div>
 
           <div className={styles.inputGroup}>
@@ -430,11 +498,131 @@ function ClientForm({ client, onSave, onClose }) {
               className={styles.input}
             />
           </div>
+
+          {/* Theme Selection */}
+          <div
+            className={`${styles.inputGroup} ${styles.fullWidth}`}
+            style={{
+              marginTop: "1rem",
+              borderTop: "1px solid #334155",
+              paddingTop: "1rem",
+            }}
+          >
+            <label
+              className={styles.label}
+              style={{ fontSize: "1.1rem", color: "#60a5fa" }}
+            >
+              Profile Theme
+            </label>
+            <select
+              name="theme"
+              value={formData.theme}
+              onChange={handleChange}
+              className={styles.input}
+              style={{ background: "#1e293b" }}
+            >
+              <option value="dark">Dark Theme (Default)</option>
+              <option value="light">Light Theme</option>
+              <option value="blue">Blue Corporate</option>
+              <option value="custom">Custom Theme</option>
+            </select>
+          </div>
+
+          {formData.theme === "custom" && (
+            <div
+              className={styles.formGrid}
+              style={{
+                gridColumn: "1 / -1",
+                background: "rgba(255,255,255,0.05)",
+                padding: "1rem",
+                borderRadius: "12px",
+              }}
+            >
+              <div className={styles.inputGroup}>
+                <label className={styles.label}>Background Color</label>
+                <input
+                  type="color"
+                  value={formData.customTheme.background}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      customTheme: {
+                        ...formData.customTheme,
+                        background: e.target.value,
+                      },
+                    })
+                  }
+                  className={styles.input}
+                  style={{ height: 40, padding: 2 }}
+                />
+              </div>
+              <div className={styles.inputGroup}>
+                <label className={styles.label}>Text Color</label>
+                <input
+                  type="color"
+                  value={formData.customTheme.textPrimary}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      customTheme: {
+                        ...formData.customTheme,
+                        textPrimary: e.target.value,
+                      },
+                    })
+                  }
+                  className={styles.input}
+                  style={{ height: 40, padding: 2 }}
+                />
+              </div>
+              <div className={styles.inputGroup}>
+                <label className={styles.label}>Accent Color</label>
+                <input
+                  type="color"
+                  value={formData.customTheme.accentColor}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      customTheme: {
+                        ...formData.customTheme,
+                        accentColor: e.target.value,
+                      },
+                    })
+                  }
+                  className={styles.input}
+                  style={{ height: 40, padding: 2 }}
+                />
+              </div>
+              <div className={styles.inputGroup}>
+                <label className={styles.label}>Button Color</label>
+                <input
+                  type="color"
+                  value={formData.customTheme.buttonBg}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      customTheme: {
+                        ...formData.customTheme,
+                        buttonBg: e.target.value,
+                      },
+                    })
+                  }
+                  className={styles.input}
+                  style={{ height: 40, padding: 2 }}
+                />
+              </div>
+            </div>
+          )}
         </div>
         <button type="submit" className={styles.submitBtn}>
           Save Client
         </button>
       </form>
+
+      <MediaManager
+        isOpen={showMedia}
+        onClose={() => setShowMedia(false)}
+        onSelect={handleMediaSelect}
+      />
     </div>
   );
 }
