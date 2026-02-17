@@ -19,7 +19,13 @@ export default function ClientsPage() {
     try {
       const res = await fetch("/api/clients");
       if (res.ok) {
-        setClients(await res.json());
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setClients(data);
+        } else {
+          console.error("API response is not an array:", data);
+          setClients([]);
+        }
       }
     } catch (error) {
       console.error("Failed to fetch clients", error);

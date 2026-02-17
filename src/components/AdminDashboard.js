@@ -12,8 +12,18 @@ export default function AdminDashboard({ initialClients = [] }) {
   useEffect(() => {
     fetch("/api/clients")
       .then((r) => r.json())
-      .then((d) => setClients(d))
-      .catch(console.error);
+      .then((d) => {
+        if (Array.isArray(d)) {
+          setClients(d);
+        } else {
+          console.error("API response is not an array:", d);
+          setClients([]);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        setClients([]);
+      });
   }, []);
 
   // Stats Calculations

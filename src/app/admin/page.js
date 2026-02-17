@@ -5,7 +5,8 @@ export const metadata = {
   title: "Admin Panel - Just Tapp",
 };
 
-export default function AdminPage() {
-  const clients = getClients();
-  return <AdminDashboard initialClients={clients} />;
+export default async function AdminPage() {
+  const clients = await getClients();
+  const safeClients = Array.isArray(clients) ? clients : [];
+  return <AdminDashboard initialClients={safeClients} />;
 }

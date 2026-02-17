@@ -3,7 +3,7 @@ import { getClientById, saveClient, deleteClient } from "@/lib/db";
 
 export async function GET(request, { params }) {
   const { id } = await params;
-  const client = getClientById(id);
+  const client = await getClientById(id);
 
   if (!client) {
     return NextResponse.json({ error: "Client not found" }, { status: 404 });
@@ -14,7 +14,7 @@ export async function GET(request, { params }) {
 
 export async function PUT(request, { params }) {
   const { id } = await params;
-  const existingClient = getClientById(id);
+  const existingClient = await getClientById(id);
 
   if (!existingClient) {
     return NextResponse.json({ error: "Client not found" }, { status: 404 });
@@ -23,9 +23,10 @@ export async function PUT(request, { params }) {
   try {
     const changes = await request.json();
     const updatedClient = { ...existingClient, ...changes, id };
-    saveClient(updatedClient);
+    await saveClient(updatedClient);
     return NextResponse.json(updatedClient);
   } catch (error) {
+    console.error("PUT error:", error);
     return NextResponse.json(
       { error: "Failed to update client" },
       { status: 500 },
@@ -35,6 +36,6 @@ export async function PUT(request, { params }) {
 
 export async function DELETE(request, { params }) {
   const { id } = await params;
-  deleteClient(id);
+  await deleteClient(id);
   return NextResponse.json({ success: true });
 }
