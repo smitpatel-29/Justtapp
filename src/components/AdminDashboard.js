@@ -211,7 +211,8 @@ function ClientForm({ client, onSave, onClose }) {
       client?.socials?.find((s) => s.platform === "WhatsApp")?.url || "",
     telegram:
       client?.socials?.find((s) => s.platform === "Telegram")?.url || "",
-    tiktok: client?.socials?.find((s) => s.platform === "TikTok")?.url || "",
+    // tiktok: client?.socials?.find((s) => s.platform === "TikTok")?.url || "", // Removed
+    twitter: client?.socials?.find((s) => s.platform === "Twitter")?.url || "", // Added
     snapchat:
       client?.socials?.find((s) => s.platform === "Snapchat")?.url || "",
     map: client?.socials?.find((s) => s.platform === "Map")?.url || "",
@@ -235,7 +236,8 @@ function ClientForm({ client, onSave, onClose }) {
     pushSocial("Youtube", formData.youtube);
     pushSocial("WhatsApp", formData.whatsapp);
     pushSocial("Telegram", formData.telegram);
-    pushSocial("TikTok", formData.tiktok);
+    // pushSocial("TikTok", formData.tiktok); // Removed
+    pushSocial("Twitter", formData.twitter); // Added
     pushSocial("Snapchat", formData.snapchat);
     pushSocial("Map", formData.map);
 
@@ -270,6 +272,7 @@ function ClientForm({ client, onSave, onClose }) {
 
       <form onSubmit={handleSubmit}>
         <div className={styles.formGrid}>
+          {/* ... existing fields ... */}
           <div className={styles.inputGroup}>
             <label className={styles.label}>Full Name</label>
             <input
@@ -470,10 +473,10 @@ function ClientForm({ client, onSave, onClose }) {
           </div>
 
           <div className={styles.inputGroup}>
-            <label className={styles.label}>TikTok URL</label>
+            <label className={styles.label}>Twitter URL</label>
             <input
-              name="tiktok"
-              value={formData.tiktok}
+              name="twitter"
+              value={formData.twitter}
               onChange={handleChange}
               className={styles.input}
             />
