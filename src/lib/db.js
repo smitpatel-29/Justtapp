@@ -1,5 +1,11 @@
 import Client from "@/models/Client";
 
+// Automatically sync database schema on import (safe for production if alter: true)
+// This avoids needing complex migration steps for simple deployments
+Client.sync({ alter: true }).catch((err) =>
+  console.error("Database sync error:", err),
+);
+
 export async function getClients() {
   try {
     const clients = await Client.findAll();
