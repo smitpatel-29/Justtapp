@@ -52,18 +52,31 @@ const initialData = [
   },
 ];
 
+// In-memory cache for production (Vercel) where FS is read-only
+let memoryClients = [...initialData];
+let isLoaded = false;
+
 export function getClients() {
-  if (!fs.existsSync(DB_PATH)) {
-    fs.writeFileSync(DB_PATH, JSON.stringify(initialData, null, 2));
-    return initialData;
-  }
+  // If we already loaded into memory, use that (serves as cache)
+  if (isLoaded) return memoryClients;
+
+  // Try to load from file system (works in local dev)
   try {
-    const fileData = fs.readFileSync(DB_PATH, "utf-8");
-    return JSON.parse(fileData);
+    if (fs.existsSync(DB_PATH)) {
+      const fileData = fs.readFileSync(DB_PATH, "utf-8");
+      memoryClients = JSON.parse(fileData);
+      isLoaded = true;
+      return memoryClients;
+    }
   } catch (error) {
-    console.error("Error reading DB:", error);
-    return [];
+    console.warn(
+      "Could not read from FS (likely production environment), using initial/memory data:",
+      error,
+    );
   }
+
+  // Fallback to initial data if file doesn't exist or can't be read
+  return memoryClients;
 }
 
 export function getClientById(id) {
@@ -84,13 +97,43 @@ export function saveClient(client) {
     clients.push(client);
   }
 
-  fs.writeFileSync(DB_PATH, JSON.stringify(clients, null, 2));
+  // Update memory
+  memoryClients = clients;
+  isLoaded = true;
+
+  // Try to write to FS (will fail in production/Vercel)
+  try {
+    // Ensure dir exists before writing
+    const dir = path.dirname(DB_PATH);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+
+    fs.writeFileSync(DB_PATH, JSON.stringify(clients, null, 2));
+  } catch (error) {
+    // Ignore write errors in production (Read-only FS)
+    console.warn(
+      "Failed to write to DB file (expected in Vercel):",
+      error.message,
+    );
+  }
+
   return client;
 }
 
 export function deleteClient(id) {
   let clients = getClients();
   clients = clients.filter((c) => c.id !== id);
-  fs.writeFileSync(DB_PATH, JSON.stringify(clients, null, 2));
+
+  // Update memory
+  memoryClients = clients;
+  isLoaded = true;
+
+  try {
+    fs.writeFileSync(DB_PATH, JSON.stringify(clients, null, 2));
+  } catch (error) {
+    console.warn(
+      "Failed to delete from DB file (expected in Vercel):",
+      error.message,
+    );
+  }
   return true;
 }
