@@ -23,7 +23,8 @@ import {
   Languages,
 } from "lucide-react";
 import styles from "./ProfileView.module.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { QRCodeCanvas } from "qrcode.react";
 
 // Language Dictionary
 const translations = {
@@ -299,6 +300,17 @@ END:VCARD`;
     };
   };
 
+  useEffect(() => {
+    if (showQr) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [showQr]);
+
   return (
     <div className={styles.wrapper} style={getThemeStyles()}>
       <div className={styles.mobileContainer}>
@@ -444,15 +456,27 @@ END:VCARD`;
                 href={client.website}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`${styles.card} ${styles.websiteCard}`}
+                className={styles.card}
               >
-                <div className={styles.websitePreview}>
-                  <Globe size={32} strokeWidth={1.5} />
-                  <span>{t.visitWebsite}</span>
+                <div
+                  className={styles.iconBox}
+                  style={{
+                    background: "rgba(139, 92, 246, 0.2)",
+                    color: "#a78bfa",
+                  }}
+                >
+                  <Globe size={20} />
                 </div>
-                <div className={styles.cardFooter}>
-                  <span>{client.website.replace(/^https?:\/\//, "")}</span>
-                  <ExternalLink size={14} />
+                <div className={styles.cardText}>
+                  <span className={styles.cardLabel}>{t.website}</span>
+                  <span className={styles.cardValue}>
+                    {client.website
+                      .replace(/^https?:\/\//, "")
+                      .replace(/\/$/, "")}
+                  </span>
+                </div>
+                <div style={{ marginLeft: "auto", opacity: 0.5 }}>
+                  <ExternalLink size={16} />
                 </div>
               </a>
             )}
@@ -499,26 +523,25 @@ END:VCARD`;
             <div className={styles.qrCard} onClick={(e) => e.stopPropagation()}>
               <h3>{t.shareProfile}</h3>
               <div className={styles.qrPlaceholder}>
-                {/* In a real app, use a QR library here. For now, pseudo-QR */}
                 <div
                   style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(5, 1fr)",
-                    gap: "4px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    padding: "1rem",
+                    background: "white",
+                    borderRadius: "8px",
                   }}
                 >
-                  {[...Array(25)].map((_, i) => (
-                    <div
-                      key={i}
-                      style={{
-                        width: "100%",
-                        aspectRatio: "1",
-                        background:
-                          Math.random() > 0.5 ? "white" : "transparent",
-                        borderRadius: "2px",
-                      }}
-                    />
-                  ))}
+                  <QRCodeCanvas
+                    value={
+                      typeof window !== "undefined" ? window.location.href : ""
+                    }
+                    size={200}
+                    bgColor={"#ffffff"}
+                    fgColor={"#000000"}
+                    level={"L"}
+                  />
                 </div>
               </div>
               <p>
