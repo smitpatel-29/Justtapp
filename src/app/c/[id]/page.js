@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import ProfileView from "@/components/ProfileView";
+import SubscriptionExpired from "@/components/SubscriptionExpired";
 import { headers } from "next/headers";
 
 async function getClient(id) {
@@ -45,6 +46,21 @@ export default async function ClientPage({ params }) {
 
   if (!client) {
     notFound();
+  }
+
+  // Check subscription status
+  if (
+    client.active === false ||
+    (client.subscriptionType === "limited" &&
+      (() => {
+        const startDate = new Date(client.subscriptionStart || Date.now());
+        const durationYears = parseInt(client.subscriptionDuration || "1", 10);
+        const expiryDate = new Date(startDate);
+        expiryDate.setFullYear(expiryDate.getFullYear() + durationYears);
+        return Date.now() > expiryDate.getTime();
+      })())
+  ) {
+    return <SubscriptionExpired />;
   }
 
   return <ProfileView client={client} />;

@@ -35,7 +35,11 @@
     "tiktok": "",
     "snapchat": "",
     "map": "",
-    "twitter": ""
+    "twitter": "",
+    "subscriptionType": "limited",
+    "subscriptionDuration": "3",
+    "subscriptionStart": "2026-02-17T08:41:36.303Z",
+    "active": true
   },
   {
     "id": "2",
@@ -101,6 +105,10 @@
       "accentColor": "#60a5fa",
       "buttonBg": "#3b82f6"
     },
-    "twitter": ""
+    "twitter": "",
+    "active": true,
+    "subscriptionType": "limited",
+    "subscriptionDuration": "1",
+    "subscriptionStart": "2026-02-17T08:46:24.860Z"
   }
 ]
