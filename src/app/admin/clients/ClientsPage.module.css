@@ -106,15 +106,16 @@
 }
 
 .nfcId {
-  font-size: 0.75rem;
-  background: rgba(255, 255, 255, 0.05);
-  color: #cbd5e1;
-  padding: 0.25rem 0.5rem;
-  border-radius: 6px;
-  margin-top: 0.5rem;
-  font-weight: 600;
   display: inline-block;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+  letter-spacing: 0.02em;
 }
 
 .cardActions {

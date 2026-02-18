@@ -27,12 +27,14 @@ export default function ClientForm({ initialData = null, onSubmit }) {
     company: initialData?.company || "",
     bio: initialData?.bio || "",
     email: initialData?.email || "",
-    phone: initialData?.phone || "",
+    phone: initialData?.phone || "+91 ",
     website: initialData?.website || "",
     avatar: initialData?.avatar || "",
     coverImage: initialData?.coverImage || "",
     address: initialData?.address || "",
-    nfcId: initialData?.nfcId || "",
+    nfcId:
+      initialData?.nfcId ||
+      Math.random().toString(36).substr(2, 8).toUpperCase(),
     theme: initialData?.theme || "dark",
     customTheme: initialData?.customTheme || {
       background: "#0f172a",
@@ -54,7 +56,8 @@ export default function ClientForm({ initialData = null, onSubmit }) {
     youtube:
       initialData?.socials?.find((s) => s.platform === "Youtube")?.url || "",
     whatsapp:
-      initialData?.socials?.find((s) => s.platform === "WhatsApp")?.url || "",
+      initialData?.socials?.find((s) => s.platform === "WhatsApp")?.url ||
+      "+91 ",
     telegram:
       initialData?.socials?.find((s) => s.platform === "Telegram")?.url || "",
     twitter:

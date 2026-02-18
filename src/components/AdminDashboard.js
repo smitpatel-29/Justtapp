@@ -28,8 +28,9 @@ export default function AdminDashboard({ initialClients = [] }) {
 
   // Stats Calculations
   const totalClients = clients.length;
+  const activeClientsCount = clients.filter((c) => c.active !== false).length;
   const activeTags = clients.filter(
-    (c) => c.nfcId && c.nfcId.length > 0,
+    (c) => c.active !== false && c.nfcId && c.nfcId.length > 0,
   ).length;
   const uniqueCompanies = new Set(clients.map((c) => c.company).filter(Boolean))
     .size;
@@ -41,12 +42,15 @@ export default function AdminDashboard({ initialClients = [] }) {
         <div className={styles.statCard}>
           <span className={styles.statLabel}>Total Clients</span>
           <span className={styles.statValue}>{totalClients}</span>
-          <span className={styles.statSub}>Active Profiles</span>
+          <span className={styles.statSub}>
+            {activeClientsCount} Active / {totalClients - activeClientsCount}{" "}
+            Inactive
+          </span>
         </div>
         <div className={styles.statCard}>
           <span className={styles.statLabel}>Active NFC Tags</span>
           <span className={styles.statValue}>{activeTags}</span>
-          <span className={styles.statSub}>Linked to accounts</span>
+          <span className={styles.statSub}>Linked & Active</span>
         </div>
         <div className={styles.statCard}>
           <span className={styles.statLabel}>Companies</span>

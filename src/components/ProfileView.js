@@ -40,7 +40,7 @@ const translations = {
     shareProfile: "Share Profile",
     scanToView: "Scan to view",
     close: "Close",
-    createdWith: "Created with",
+    createdWith: "Powered by",
     profileLinkCopied: "Profile link copied!",
   },
   hi: {

@@ -105,7 +105,20 @@ export default function ClientsPage() {
                     {client.nfcId && (
                       <span className={styles.nfcId}>TAG: {client.nfcId}</span>
                     )}
-                    {client.subscriptionType === "limited" &&
+                    {client.active === false ? (
+                      <span
+                        className={styles.nfcId}
+                        style={{
+                          marginLeft: "0.5rem",
+                          background: "rgba(239, 68, 68, 0.2)",
+                          color: "#fca5a5",
+                          border: "1px solid rgba(239, 68, 68, 0.2)",
+                        }}
+                      >
+                        INACTIVE
+                      </span>
+                    ) : (
+                      client.subscriptionType === "limited" &&
                       (() => {
                         const start = new Date(
                           client.subscriptionStart || Date.now(),
@@ -135,7 +148,8 @@ export default function ClientsPage() {
                             {isExpired ? "EXPIRED" : "ACTIVE"}
                           </span>
                         );
-                      })()}
+                      })()
+                    )}
                   </div>
                 </div>
 
