@@ -5,10 +5,17 @@ const Client = sequelize.define(
   "Client",
   {
     id: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       primaryKey: true,
+      autoIncrement: true,
     },
-    name: DataTypes.STRING,
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+      },
+    },
     title: DataTypes.STRING,
     company: DataTypes.STRING,
     bio: DataTypes.TEXT,
@@ -21,6 +28,7 @@ const Client = sequelize.define(
     nfcId: {
       type: DataTypes.STRING,
       unique: true,
+      allowNull: true,
     },
     password: DataTypes.STRING,
     theme: {
@@ -62,6 +70,7 @@ const Client = sequelize.define(
   },
   {
     timestamps: true,
+    paranoid: true, // Enables soft deletes (deletedAt)
   },
 );
 

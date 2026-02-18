@@ -3,21 +3,32 @@
 import { useState, useEffect } from "react";
 import AdminLayout from "@/components/AdminLayout";
 import Link from "next/link";
-import { Plus, Search, Edit2, Trash2, ExternalLink } from "lucide-react";
+import {
+  Plus,
+  Search,
+  Edit2,
+  Trash2,
+  ExternalLink,
+  RotateCcw,
+  Archive,
+} from "lucide-react";
 import styles from "./ClientsPage.module.css";
 
 export default function ClientsPage() {
   const [clients, setClients] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
+  const [showTrash, setShowTrash] = useState(false);
 
   useEffect(() => {
     fetchClients();
-  }, []);
+  }, [showTrash]);
 
   const fetchClients = async () => {
+    setLoading(true);
     try {
-      const res = await fetch("/api/clients");
+      const url = showTrash ? "/api/clients?deleted=true" : "/api/clients";
+      const res = await fetch(url);
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data)) {
@@ -35,7 +46,7 @@ export default function ClientsPage() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Are you sure?")) return;
+    if (!confirm("Are you sure you want to move this client to trash?")) return;
     try {
       const res = await fetch(`/api/clients/${id}`, { method: "DELETE" });
       if (res.ok) {
@@ -46,15 +57,29 @@ export default function ClientsPage() {
     }
   };
 
+  const handleRestore = async (id) => {
+    try {
+      const res = await fetch(`/api/clients/${id}/restore`, { method: "POST" });
+      if (res.ok) {
+        setClients(clients.filter((c) => c.id !== id));
+      } else {
+        alert("Failed to restore client");
+      }
+    } catch (e) {
+      console.error(e);
+      alert("Error restoring client");
+    }
+  };
+
   const filteredClients = clients.filter(
     (client) =>
-      client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      client.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       client.company?.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
     <AdminLayout
-      title="All Clients"
+      title={showTrash ? "Deleted Clients" : "All Clients"}
       actions={
         <div className={styles.actions}>
           <div className={styles.searchBox}>
@@ -67,9 +92,29 @@ export default function ClientsPage() {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <Link href="/admin/clients/add" className={styles.addBtn}>
-            <Plus size={20} /> Add Client
-          </Link>
+          <button
+            onClick={() => setShowTrash(!showTrash)}
+            className={styles.addBtn}
+            style={{
+              background: showTrash ? "#64748b" : "#475569",
+              marginRight: "0.5rem",
+            }}
+          >
+            {showTrash ? (
+              <>
+                <Archive size={20} /> View Active
+              </>
+            ) : (
+              <>
+                <Trash2 size={20} /> View Trash
+              </>
+            )}
+          </button>
+          {!showTrash && (
+            <Link href="/admin/clients/add" className={styles.addBtn}>
+              <Plus size={20} /> Add Client
+            </Link>
+          )}
         </div>
       }
     >
@@ -81,7 +126,11 @@ export default function ClientsPage() {
         <div className={styles.grid}>
           {filteredClients.length === 0 ? (
             <div className={styles.emptyState}>
-              <p>No clients found matching your search.</p>
+              <p>
+                {showTrash
+                  ? "No deleted clients found."
+                  : "No clients found matching your search."}
+              </p>
             </div>
           ) : (
             filteredClients.map((client) => (
@@ -105,83 +154,104 @@ export default function ClientsPage() {
                     {client.nfcId && (
                       <span className={styles.nfcId}>TAG: {client.nfcId}</span>
                     )}
-                    {client.active === false ? (
-                      <span
-                        className={styles.nfcId}
-                        style={{
-                          marginLeft: "0.5rem",
-                          background: "rgba(239, 68, 68, 0.2)",
-                          color: "#fca5a5",
-                          border: "1px solid rgba(239, 68, 68, 0.2)",
-                        }}
-                      >
-                        INACTIVE
-                      </span>
-                    ) : (
-                      client.subscriptionType === "limited" &&
-                      (() => {
-                        const start = new Date(
-                          client.subscriptionStart || Date.now(),
-                        );
-                        const duration = parseInt(
-                          client.subscriptionDuration || "1",
-                          10,
-                        );
-                        const expiry = new Date(start);
-                        expiry.setFullYear(expiry.getFullYear() + duration);
-                        const isExpired = Date.now() > expiry.getTime();
+                    {/* Status Badge logic */}
+                    {!showTrash &&
+                      (client.active === false ? (
+                        <span
+                          className={styles.nfcId}
+                          style={{
+                            marginLeft: "0.5rem",
+                            background: "rgba(239, 68, 68, 0.2)",
+                            color: "#fca5a5",
+                            border: "1px solid rgba(239, 68, 68, 0.2)",
+                          }}
+                        >
+                          INACTIVE
+                        </span>
+                      ) : (
+                        client.subscriptionType === "limited" &&
+                        (() => {
+                          const start = new Date(
+                            client.subscriptionStart || Date.now(),
+                          );
+                          const duration = parseInt(
+                            client.subscriptionDuration || "1",
+                            10,
+                          );
+                          const expiry = new Date(start);
+                          expiry.setFullYear(expiry.getFullYear() + duration);
+                          const isExpired = Date.now() > expiry.getTime();
 
-                        return (
-                          <span
-                            className={styles.nfcId}
-                            style={{
-                              marginLeft: "0.5rem",
-                              background: isExpired
-                                ? "rgba(239, 68, 68, 0.2)"
-                                : "rgba(34, 197, 94, 0.2)",
-                              color: isExpired ? "#fca5a5" : "#86efac",
-                              border: isExpired
-                                ? "1px solid rgba(239, 68, 68, 0.2)"
-                                : "1px solid rgba(34, 197, 94, 0.2)",
-                            }}
-                          >
-                            {isExpired ? "EXPIRED" : "ACTIVE"}
-                          </span>
-                        );
-                      })()
-                    )}
+                          return (
+                            <span
+                              className={styles.nfcId}
+                              style={{
+                                marginLeft: "0.5rem",
+                                background: isExpired
+                                  ? "rgba(239, 68, 68, 0.2)"
+                                  : "rgba(34, 197, 94, 0.2)",
+                                color: isExpired ? "#fca5a5" : "#86efac",
+                                border: isExpired
+                                  ? "1px solid rgba(239, 68, 68, 0.2)"
+                                  : "1px solid rgba(34, 197, 94, 0.2)",
+                              }}
+                            >
+                              {isExpired ? "EXPIRED" : "ACTIVE"}
+                            </span>
+                          );
+                        })()
+                      ))}
                   </div>
                 </div>
 
                 <div className={styles.cardActions}>
-                  <Link
-                    href={`/c/${client.id}`}
-                    target="_blank"
-                    className={styles.previewLink}
-                  >
-                    View Profile{" "}
-                    <ExternalLink size={14} style={{ display: "inline" }} />
-                  </Link>
+                  {!showTrash && (
+                    <Link
+                      href={`/c/${client.id}`}
+                      target="_blank"
+                      className={styles.previewLink}
+                    >
+                      View Profile{" "}
+                      <ExternalLink size={14} style={{ display: "inline" }} />
+                    </Link>
+                  )}
 
                   <div className={styles.btnGroup}>
-                    <Link
-                      href={`/admin/clients/edit/${client.id}`}
-                      className={`${styles.iconBtn} ${styles.btnEdit}`}
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        textDecoration: "none",
-                      }}
-                    >
-                      <Edit2 size={18} />
-                    </Link>
-                    <button
-                      className={`${styles.iconBtn} ${styles.btnDelete}`}
-                      onClick={() => handleDelete(client.id)}
-                    >
-                      <Trash2 size={18} />
-                    </button>
+                    {showTrash ? (
+                      <button
+                        className={`${styles.iconBtn} ${styles.btnEdit}`}
+                        onClick={() => handleRestore(client.id)}
+                        title="Restore Client"
+                        style={{ width: "auto", padding: "0.5rem 1rem" }}
+                      >
+                        <RotateCcw
+                          size={18}
+                          style={{ marginRight: "0.5rem" }}
+                        />{" "}
+                        Restore
+                      </button>
+                    ) : (
+                      <>
+                        <Link
+                          href={`/admin/clients/edit/${client.id}`}
+                          className={`${styles.iconBtn} ${styles.btnEdit}`}
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            textDecoration: "none",
+                          }}
+                        >
+                          <Edit2 size={18} />
+                        </Link>
+                        <button
+                          className={`${styles.iconBtn} ${styles.btnDelete}`}
+                          onClick={() => handleDelete(client.id)}
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>

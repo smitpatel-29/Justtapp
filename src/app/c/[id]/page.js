@@ -19,7 +19,7 @@ async function getClient(id) {
 
     const clients = await res.json();
     if (!Array.isArray(clients)) return null;
-    return clients.find((c) => c.id === id);
+    return clients.find((c) => c.id == id);
   } catch (error) {
     console.error("Failed to fetch client:", error);
     return null;

@@ -21,7 +21,7 @@ const sequelize = new Sequelize(
 const Client = sequelize.define(
   "Client",
   {
-    id: { type: DataTypes.STRING, primaryKey: true },
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     name: DataTypes.STRING,
     title: DataTypes.STRING,
     company: DataTypes.STRING,
@@ -52,12 +52,12 @@ const Client = sequelize.define(
     map: DataTypes.STRING,
     twitter: DataTypes.STRING,
   },
-  { timestamps: true },
+  { timestamps: true, paranoid: true },
 );
 
 const dummyClients = [
   {
-    id: "1",
+    id: 1,
     name: "Alex Johnson",
     title: "Senior Developer",
     company: "Tech Solutions",
@@ -75,7 +75,7 @@ const dummyClients = [
     socials: [{ platform: "LinkedIn", url: "https://linkedin.com" }],
   },
   {
-    id: "2",
+    id: 2,
     name: "Sarah Smith",
     title: "UX Designer",
     company: "Creative Studio",
@@ -92,7 +92,7 @@ const dummyClients = [
     socials: [{ platform: "Instagram", url: "https://instagram.com" }],
   },
   {
-    id: "3",
+    id: 3,
     name: "Michael Chen",
     title: "Product Manager",
     company: "Innovate Inc",
@@ -109,7 +109,7 @@ const dummyClients = [
     socials: [{ platform: "Twitter", url: "https://twitter.com" }],
   },
   {
-    id: "4",
+    id: 4,
     name: "Emily Davis",
     title: "Marketing Lead",
     company: "Growth Hackers",
@@ -125,7 +125,7 @@ const dummyClients = [
     socials: [],
   },
   {
-    id: "5",
+    id: 5,
     name: "David Wilson",
     title: "CTO",
     company: "Future Tech",
@@ -140,6 +140,57 @@ const dummyClients = [
     nfcId: "nfc-005",
     socials: [],
   },
+  {
+    id: 6,
+    name: "Robert Brown",
+    title: "Sales Director",
+    company: "Global Corp",
+    bio: "Driving revenue and building lasting partnerships.",
+    avatar:
+      "https://ui-avatars.com/api/?name=Robert+Brown&background=795548&color=fff",
+    coverImage:
+      "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1000",
+    email: "robert@globalcorp.com",
+    phone: "+15125550106",
+    active: true,
+    nfcId: "nfc-006",
+    socials: [{ platform: "LinkedIn", url: "https://linkedin.com" }],
+  },
+  {
+    id: 7,
+    name: "Jennifer Lee",
+    title: "Content Strategist",
+    company: "Media Buzz",
+    bio: "Creating compelling narratives for brands.",
+    avatar:
+      "https://ui-avatars.com/api/?name=Jennifer+Lee&background=E91E63&color=fff",
+    coverImage:
+      "https://images.unsplash.com/photo-1493612276216-ee3925520721?w=1000",
+    email: "jennifer@mediabuzz.com",
+    phone: "+15125550107",
+    active: true,
+    nfcId: "nfc-007",
+    socials: [
+      { platform: "Instagram", url: "https://instagram.com" },
+      { platform: "Twitter", url: "https://twitter.com" },
+    ],
+  },
+  {
+    id: 8,
+    name: "William Taylor",
+    title: "Operations Manager",
+    company: "FastTrack Logistics",
+    bio: "Optimizing workflows for maximum efficiency.",
+    avatar:
+      "https://ui-avatars.com/api/?name=William+Taylor&background=607D8B&color=fff",
+    coverImage:
+      "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1000",
+    email: "william@fasttrack.com",
+    phone: "+15125550108",
+    active: true,
+    nfcId: "nfc-008",
+    socials: [{ platform: "WhatsApp", url: "https://whatsapp.com" }],
+  },
 ];
 
 async function seed() {
@@ -147,10 +198,14 @@ async function seed() {
     await sequelize.authenticate();
     console.log("Connected to DB.");
 
-    // Use upsert to insert or update
-    for (const client of dummyClients) {
-      await Client.upsert(client);
-    }
+    console.log("Connected to DB.");
+
+    // Force sync to recreate table with correct schema (Integer ID + AutoIncrement)
+    await sequelize.sync({ force: true });
+    console.log("Database synced (force: true). Tables recreated.");
+
+    // Use bulkCreate for faster seeding
+    await Client.bulkCreate(dummyClients);
 
     console.log("Seeded 5 dummy clients successfully.");
   } catch (error) {

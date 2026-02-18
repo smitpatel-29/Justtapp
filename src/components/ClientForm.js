@@ -10,6 +10,7 @@ import {
   Share2,
   Lock,
   Palette,
+  LayoutTemplate,
 } from "lucide-react";
 import styles from "./ClientForm.module.css";
 import MediaManager from "@/components/MediaManager";
@@ -19,6 +20,7 @@ export default function ClientForm({ initialData = null, onSubmit }) {
   const [loading, setLoading] = useState(false);
   const [showMedia, setShowMedia] = useState(false);
   const [mediaTarget, setMediaTarget] = useState(null);
+  const [activeTab, setActiveTab] = useState("details");
 
   const [formData, setFormData] = useState({
     active: initialData?.active !== false,
@@ -115,349 +117,440 @@ export default function ClientForm({ initialData = null, onSubmit }) {
   return (
     <>
       <form onSubmit={handleSubmit} className={styles.formContainer}>
-        {/* Visuals & Subscription (Combined) */}
-        <div className={styles.sectionCard}>
-          <h3 className={styles.sectionTitle}>
-            <Palette size={20} /> Visuals & Subscription
-          </h3>
-          <div className={styles.formGrid}>
-            {/* Visuals */}
-            <div className={styles.inputGroup}>
-              <label>Profile Photo</label>
-              <div style={{ display: "flex", gap: "8px" }}>
-                <input
-                  name="avatar"
-                  value={formData.avatar}
-                  onChange={handleChange}
-                  placeholder="https://..."
-                  className={styles.input}
-                />
-                <button
-                  type="button"
-                  onClick={() => openMedia("avatar")}
-                  className={styles.btnSmall}
-                >
-                  <ImageIcon size={18} />
-                </button>
-              </div>
-              {formData.avatar && (
-                <img
-                  src={formData.avatar}
-                  alt="Preview"
-                  style={{
-                    width: "48px",
-                    height: "48px",
-                    borderRadius: "50%",
-                    marginTop: "0.5rem",
-                    objectFit: "cover",
-                  }}
-                />
-              )}
-            </div>
-            <div className={styles.inputGroup}>
-              <label>Cover Image</label>
-              <div style={{ display: "flex", gap: "8px" }}>
-                <input
-                  name="coverImage"
-                  value={formData.coverImage}
-                  onChange={handleChange}
-                  placeholder="https://..."
-                  className={styles.input}
-                />
-                <button
-                  type="button"
-                  onClick={() => openMedia("coverImage")}
-                  className={styles.btnSmall}
-                >
-                  <ImageIcon size={18} />
-                </button>
-              </div>
-            </div>
-            <div className={styles.inputGroup}>
-              <label>Profile Theme</label>
-              <select
-                name="theme"
-                value={formData.theme}
-                onChange={handleChange}
-                className={styles.select}
-                style={{ background: "#0f172a" }}
-              >
-                <option value="dark">Dark Theme (Default)</option>
-                <option value="light">Light Theme</option>
-                <option value="blue">Blue Corporate</option>
-                <option value="custom">Custom Theme</option>
-              </select>
-            </div>
+        {/* Tabs */}
+        <div className={styles.tabContainer}>
+          <button
+            type="button"
+            className={`${styles.tabButton} ${activeTab === "details" ? styles.activeTab : ""}`}
+            onClick={() => setActiveTab("details")}
+          >
+            <User size={18} /> Profile Details
+          </button>
+          <button
+            type="button"
+            className={`${styles.tabButton} ${activeTab === "appearance" ? styles.activeTab : ""}`}
+            onClick={() => setActiveTab("appearance")}
+          >
+            <LayoutTemplate size={18} /> Appearance & Layout
+          </button>
+        </div>
 
-            {/* Subscription Fields mixed in or appended */}
-            <div className={styles.inputGroup}>
-              <label>NFC Tag ID</label>
-              <input
-                name="nfcId"
-                value={formData.nfcId}
-                onChange={handleChange}
-                placeholder="Unique Tag Serial"
-                className={styles.input}
-              />
-            </div>
-            <div className={styles.inputGroup}>
-              <label>Account Status</label>
-              <button
-                type="button"
-                onClick={() =>
-                  setFormData({ ...formData, active: !formData.active })
-                }
-                style={{
-                  background: formData.active
-                    ? "rgba(34, 197, 94, 0.2)"
-                    : "rgba(239, 68, 68, 0.2)",
-                  color: formData.active ? "#4ade80" : "#f87171",
-                  border: `1px solid ${
-                    formData.active
-                      ? "rgba(34, 197, 94, 0.3)"
-                      : "rgba(239, 68, 68, 0.3)"
-                  }`,
-                  padding: "0.75rem 1rem",
-                  borderRadius: "8px",
-                  cursor: "pointer",
-                  width: "100%",
-                  textAlign: "left",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  fontWeight: "600",
-                }}
-              >
-                {formData.active ? "Active" : "Deactivated"}
-                <span style={{ fontSize: "0.8rem", opacity: 0.7 }}>
-                  {formData.active
-                    ? "Click to Deactivate"
-                    : "Click to Activate"}
-                </span>
-              </button>
-            </div>
-            <div className={styles.inputGroup}>
-              <label>Plan Type</label>
-              <select
-                name="subscriptionType"
-                value={formData.subscriptionType || "unlimited"}
-                onChange={handleChange}
-                className={styles.select}
-                style={{ background: "#0f172a" }}
-              >
-                <option value="unlimited">Lifetime Access (Unlimited)</option>
-                <option value="limited">Limited Duration</option>
-              </select>
-            </div>
-
-            {formData.subscriptionType === "limited" && (
-              <>
+        {/* Tab 1: Profile Details */}
+        {activeTab === "details" && (
+          <>
+            {/* Visuals & Subscription */}
+            <div className={styles.sectionCard}>
+              <h3 className={styles.sectionTitle}>
+                <ImageIcon size={20} /> Visuals & Status
+              </h3>
+              <div className={styles.formGrid}>
+                {/* Visuals */}
                 <div className={styles.inputGroup}>
-                  <label>Duration</label>
-                  <select
-                    name="subscriptionDuration"
-                    value={formData.subscriptionDuration || "1"}
-                    onChange={handleChange}
-                    className={styles.select}
-                    style={{ background: "#0f172a" }}
-                  >
-                    <option value="1">1 Year</option>
-                    <option value="2">2 Years</option>
-                    <option value="3">3 Years</option>
-                    <option value="4">4 Years</option>
-                  </select>
+                  <label>Profile Photo</label>
+                  <div style={{ display: "flex", gap: "8px" }}>
+                    <input
+                      name="avatar"
+                      value={formData.avatar}
+                      onChange={handleChange}
+                      placeholder="https://..."
+                      className={styles.input}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => openMedia("avatar")}
+                      className={styles.btnSmall}
+                    >
+                      <ImageIcon size={18} />
+                    </button>
+                  </div>
+                  {formData.avatar && (
+                    <img
+                      src={formData.avatar}
+                      alt="Preview"
+                      style={{
+                        width: "48px",
+                        height: "48px",
+                        borderRadius: "50%",
+                        marginTop: "0.5rem",
+                        objectFit: "cover",
+                      }}
+                    />
+                  )}
                 </div>
                 <div className={styles.inputGroup}>
-                  <label>Start Date</label>
-                  <input
-                    type="date"
-                    name="subscriptionStart"
-                    value={
-                      formData.subscriptionStart
-                        ? formData.subscriptionStart.split("T")[0]
-                        : new Date().toISOString().split("T")[0]
+                  <label>Cover Image</label>
+                  <div style={{ display: "flex", gap: "8px" }}>
+                    <input
+                      name="coverImage"
+                      value={formData.coverImage}
+                      onChange={handleChange}
+                      placeholder="https://..."
+                      className={styles.input}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => openMedia("coverImage")}
+                      className={styles.btnSmall}
+                    >
+                      <ImageIcon size={18} />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Subscription / Status */}
+                <div className={styles.inputGroup}>
+                  <label>Account Status</label>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setFormData({ ...formData, active: !formData.active })
                     }
+                    style={{
+                      background: formData.active
+                        ? "rgba(34, 197, 94, 0.2)"
+                        : "rgba(239, 68, 68, 0.2)",
+                      color: formData.active ? "#4ade80" : "#f87171",
+                      border: `1px solid ${
+                        formData.active
+                          ? "rgba(34, 197, 94, 0.3)"
+                          : "rgba(239, 68, 68, 0.3)"
+                      }`,
+                      padding: "0.75rem 1rem",
+                      borderRadius: "8px",
+                      cursor: "pointer",
+                      width: "100%",
+                      textAlign: "left",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      fontWeight: "600",
+                    }}
+                  >
+                    {formData.active ? "Active" : "Deactivated"}
+                    <span style={{ fontSize: "0.8rem", opacity: 0.7 }}>
+                      {formData.active
+                        ? "Click to Deactivate"
+                        : "Click to Activate"}
+                    </span>
+                  </button>
+                </div>
+
+                <div className={styles.inputGroup}>
+                  <label>Current Layout</label>
+                  <div
+                    style={{
+                      padding: "0.6rem 0.8rem",
+                      background: "rgba(255,255,255,0.05)",
+                      borderRadius: "8px",
+                      color: "#94a3b8",
+                      fontSize: "0.9rem",
+                    }}
+                  >
+                    {formData.layout
+                      ? formData.layout.charAt(0).toUpperCase() +
+                        formData.layout.slice(1)
+                      : "Classic"}
+                    <span
+                      style={{
+                        marginLeft: "10px",
+                        fontSize: "0.8rem",
+                        color: "#64748b",
+                      }}
+                    >
+                      (Edit in Appearance tab)
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Personal Details */}
+            <div className={styles.sectionCard}>
+              <h3 className={styles.sectionTitle}>
+                <User size={20} /> Personal Details
+              </h3>
+              <div className={styles.formGrid}>
+                <div className={styles.inputGroup}>
+                  <label>Full Name</label>
+                  <input
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                    className={styles.input}
+                  />
+                </div>
+                <div className={styles.inputGroup}>
+                  <label>Email Address</label>
+                  <input
+                    name="email"
+                    value={formData.email}
                     onChange={handleChange}
                     className={styles.input}
                   />
                 </div>
-              </>
-            )}
-          </div>
-        </div>
+                <div className={styles.inputGroup}>
+                  <label>Phone Number</label>
+                  <input
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className={styles.input}
+                  />
+                </div>
+                <div className={`${styles.inputGroup} ${styles.fullWidth}`}>
+                  <label>Bio / About</label>
+                  <textarea
+                    name="bio"
+                    value={formData.bio}
+                    onChange={handleChange}
+                    rows={3}
+                    className={styles.textarea}
+                  />
+                </div>
+              </div>
+            </div>
 
-        {/* Personal Details */}
-        <div className={styles.sectionCard}>
-          <h3 className={styles.sectionTitle}>
-            <User size={20} /> Personal Details
-          </h3>
-          <div className={styles.formGrid}>
-            <div className={styles.inputGroup}>
-              <label>Full Name</label>
-              <input
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                className={styles.input}
-              />
+            {/* Professional Details */}
+            <div className={styles.sectionCard}>
+              <h3 className={styles.sectionTitle}>
+                <Briefcase size={20} /> Professional Info
+              </h3>
+              <div className={styles.formGrid}>
+                <div className={styles.inputGroup}>
+                  <label>Job Title</label>
+                  <input
+                    name="title"
+                    value={formData.title}
+                    onChange={handleChange}
+                    className={styles.input}
+                  />
+                </div>
+                <div className={styles.inputGroup}>
+                  <label>Company Name</label>
+                  <input
+                    name="company"
+                    value={formData.company}
+                    onChange={handleChange}
+                    className={styles.input}
+                  />
+                </div>
+                <div className={styles.inputGroup}>
+                  <label>Business Address</label>
+                  <input
+                    name="address"
+                    value={formData.address}
+                    onChange={handleChange}
+                    className={styles.input}
+                  />
+                </div>
+                <div className={styles.inputGroup}>
+                  <label>Website URL</label>
+                  <input
+                    name="website"
+                    value={formData.website}
+                    onChange={handleChange}
+                    className={styles.input}
+                  />
+                </div>
+              </div>
             </div>
-            <div className={styles.inputGroup}>
-              <label>Email Address</label>
-              <input
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className={styles.input}
-              />
-            </div>
-            <div className={styles.inputGroup}>
-              <label>Phone Number</label>
-              <input
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                className={styles.input}
-              />
-            </div>
-            <div className={`${styles.inputGroup} ${styles.fullWidth}`}>
-              <label>Bio / About</label>
-              <textarea
-                name="bio"
-                value={formData.bio}
-                onChange={handleChange}
-                rows={3}
-                className={styles.textarea}
-              />
-            </div>
-          </div>
-        </div>
 
-        {/* Professional Details */}
-        <div className={styles.sectionCard}>
-          <h3 className={styles.sectionTitle}>
-            <Briefcase size={20} /> Professional Info
-          </h3>
-          <div className={styles.formGrid}>
-            <div className={styles.inputGroup}>
-              <label>Job Title</label>
-              <input
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-                className={styles.input}
-              />
+            {/* Social Media Links */}
+            <div className={styles.sectionCard}>
+              <h3 className={styles.sectionTitle}>
+                <Share2 size={20} /> Social Media Links
+              </h3>
+              <div className={styles.formGrid}>
+                <div className={styles.inputGroup}>
+                  <label>LinkedIn</label>
+                  <input
+                    name="linkedin"
+                    value={formData.linkedin}
+                    onChange={handleChange}
+                    className={styles.input}
+                  />
+                </div>
+                <div className={styles.inputGroup}>
+                  <label>Instagram</label>
+                  <input
+                    name="instagram"
+                    value={formData.instagram}
+                    onChange={handleChange}
+                    className={styles.input}
+                  />
+                </div>
+                <div className={styles.inputGroup}>
+                  <label>WhatsApp</label>
+                  <input
+                    name="whatsapp"
+                    value={formData.whatsapp}
+                    onChange={handleChange}
+                    className={styles.input}
+                  />
+                </div>
+                <div className={styles.inputGroup}>
+                  <label>Facebook</label>
+                  <input
+                    name="facebook"
+                    value={formData.facebook}
+                    onChange={handleChange}
+                    className={styles.input}
+                  />
+                </div>
+                <div className={styles.inputGroup}>
+                  <label>YouTube</label>
+                  <input
+                    name="youtube"
+                    value={formData.youtube}
+                    onChange={handleChange}
+                    className={styles.input}
+                  />
+                </div>
+                <div className={styles.inputGroup}>
+                  <label>Telegram</label>
+                  <input
+                    name="telegram"
+                    value={formData.telegram}
+                    onChange={handleChange}
+                    className={styles.input}
+                  />
+                </div>
+                <div className={styles.inputGroup}>
+                  <label>Twitter / X</label>
+                  <input
+                    name="twitter"
+                    value={formData.twitter}
+                    onChange={handleChange}
+                    className={styles.input}
+                  />
+                </div>
+                <div className={styles.inputGroup}>
+                  <label>Map Location URL</label>
+                  <input
+                    name="map"
+                    value={formData.map}
+                    onChange={handleChange}
+                    className={styles.input}
+                  />
+                </div>
+              </div>
             </div>
-            <div className={styles.inputGroup}>
-              <label>Company Name</label>
-              <input
-                name="company"
-                value={formData.company}
-                onChange={handleChange}
-                className={styles.input}
-              />
-            </div>
-            <div className={styles.inputGroup}>
-              <label>Business Address</label>
-              <input
-                name="address"
-                value={formData.address}
-                onChange={handleChange}
-                className={styles.input}
-              />
-            </div>
-            <div className={styles.inputGroup}>
-              <label>Website URL</label>
-              <input
-                name="website"
-                value={formData.website}
-                onChange={handleChange}
-                className={styles.input}
-              />
-            </div>
-          </div>
-        </div>
 
-        {/* Social Media Links */}
-        <div className={styles.sectionCard}>
-          <h3 className={styles.sectionTitle}>
-            <Share2 size={20} /> Social Media Links
-          </h3>
-          <div className={styles.formGrid}>
-            <div className={styles.inputGroup}>
-              <label>LinkedIn</label>
-              <input
-                name="linkedin"
-                value={formData.linkedin}
-                onChange={handleChange}
-                className={styles.input}
-              />
+            {/* Admin / Plan (Optional, put at bottom of details) */}
+            <div className={styles.sectionCard}>
+              <h3 className={styles.sectionTitle}>
+                <Lock size={20} /> Admin & Plan
+              </h3>
+              <div className={styles.formGrid}>
+                <div className={styles.inputGroup}>
+                  <label>NFC Tag ID</label>
+                  <input
+                    name="nfcId"
+                    value={formData.nfcId}
+                    onChange={handleChange}
+                    placeholder="Unique Tag Serial"
+                    className={styles.input}
+                  />
+                </div>
+                <div className={styles.inputGroup}>
+                  <label>Plan Type</label>
+                  <select
+                    name="subscriptionType"
+                    value={formData.subscriptionType || "unlimited"}
+                    onChange={handleChange}
+                    className={styles.select}
+                    style={{ background: "#0f172a" }}
+                  >
+                    <option value="unlimited">
+                      Lifetime Access (Unlimited)
+                    </option>
+                    <option value="limited">Limited Duration</option>
+                  </select>
+                </div>
+                {formData.subscriptionType === "limited" && (
+                  <>
+                    <div className={styles.inputGroup}>
+                      <label>Duration</label>
+                      <select
+                        name="subscriptionDuration"
+                        value={formData.subscriptionDuration || "1"}
+                        onChange={handleChange}
+                        className={styles.select}
+                        style={{ background: "#0f172a" }}
+                      >
+                        <option value="1">1 Year</option>
+                        <option value="2">2 Years</option>
+                        <option value="3">3 Years</option>
+                        <option value="4">4 Years</option>
+                      </select>
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label>Start Date</label>
+                      <input
+                        type="date"
+                        name="subscriptionStart"
+                        value={
+                          formData.subscriptionStart
+                            ? formData.subscriptionStart.split("T")[0]
+                            : new Date().toISOString().split("T")[0]
+                        }
+                        onChange={handleChange}
+                        className={styles.input}
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
-            <div className={styles.inputGroup}>
-              <label>Instagram</label>
-              <input
-                name="instagram"
-                value={formData.instagram}
-                onChange={handleChange}
-                className={styles.input}
-              />
+          </>
+        )}
+
+        {/* Tab 2: Appearance */}
+        {activeTab === "appearance" && (
+          <>
+            {/* Profile Layout Section */}
+            <div className={styles.formSection}>
+              <h3 className={styles.sectionTitle}>
+                <LayoutTemplate size={20} /> Profile Layout
+              </h3>
+
+              <div className={styles.inputGroup}>
+                <select
+                  name="layout"
+                  value={formData.layout || "classic"}
+                  onChange={handleChange}
+                  className={styles.select}
+                  style={{ background: "#0f172a" }}
+                >
+                  <option value="classic">Classic Layout</option>
+                  <option value="modern">Modern Layout</option>
+                  <option value="minimal">Minimal Layout</option>
+                </select>
+              </div>
             </div>
-            <div className={styles.inputGroup}>
-              <label>WhatsApp</label>
-              <input
-                name="whatsapp"
-                value={formData.whatsapp}
-                onChange={handleChange}
-                className={styles.input}
-              />
+
+            <div className={`${styles.formSection} ${styles.themeSection}`}>
+              <h3 className={styles.sectionTitle}>
+                <Palette size={20} /> Color Theme
+              </h3>
+              <div className={styles.inputGroup}>
+                <select
+                  name="theme"
+                  value={formData.theme}
+                  onChange={handleChange}
+                  className={styles.select}
+                  style={{ background: "#0f172a" }}
+                >
+                  <option value="dark">Dark Theme (Default)</option>
+                  <option value="light">Light Theme</option>
+                  <option value="blue">Blue Corporate</option>
+                  <option value="custom">Custom Theme</option>
+                </select>
+              </div>
             </div>
-            <div className={styles.inputGroup}>
-              <label>Facebook</label>
-              <input
-                name="facebook"
-                value={formData.facebook}
-                onChange={handleChange}
-                className={styles.input}
-              />
-            </div>
-            <div className={styles.inputGroup}>
-              <label>YouTube</label>
-              <input
-                name="youtube"
-                value={formData.youtube}
-                onChange={handleChange}
-                className={styles.input}
-              />
-            </div>
-            <div className={styles.inputGroup}>
-              <label>Telegram</label>
-              <input
-                name="telegram"
-                value={formData.telegram}
-                onChange={handleChange}
-                className={styles.input}
-              />
-            </div>
-            <div className={styles.inputGroup}>
-              <label>Twitter / X</label>
-              <input
-                name="twitter"
-                value={formData.twitter}
-                onChange={handleChange}
-                className={styles.input}
-              />
-            </div>
-            <div className={styles.inputGroup}>
-              <label>Map Location URL</label>
-              <input
-                name="map"
-                value={formData.map}
-                onChange={handleChange}
-                className={styles.input}
-              />
-            </div>
-          </div>
-        </div>
+          </>
+        )}
 
         <div className={styles.btnGroup}>
           <button

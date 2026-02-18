@@ -1,10 +1,13 @@
 import Client from "@/models/Client";
+import crypto from "crypto";
 
 // Automatically sync database schema on import (safe for production if alter: true)
 // This avoids needing complex migration steps for simple deployments
 Client.sync({ alter: true }).catch((err) =>
   console.error("Database sync error:", err),
 );
+
+import { Op } from "sequelize";
 
 export async function getClients() {
   try {
@@ -13,6 +16,43 @@ export async function getClients() {
   } catch (error) {
     console.error("Error fetching clients:", error);
     return [];
+  }
+}
+
+export async function getDeletedClients() {
+  try {
+    const clients = await Client.findAll({
+      where: { deletedAt: { [Op.ne]: null } },
+      paranoid: false,
+    });
+    return clients.map((c) => c.toJSON());
+  } catch (error) {
+    console.error("Error fetching deleted clients:", error);
+    return [];
+  }
+}
+
+export async function restoreClient(id) {
+  try {
+    await Client.restore({ where: { id } });
+    return true;
+  } catch (error) {
+    console.error("Error restoring client:", error);
+    return false;
+  }
+}
+
+export async function permanentDeleteClient(id) {
+  try {
+    // Force delete (hard delete)
+    const deleted = await Client.destroy({
+      where: { id },
+      force: true,
+    });
+    return deleted > 0;
+  } catch (error) {
+    console.error("Error permanently deleting client:", error);
+    return false;
   }
 }
 
@@ -28,6 +68,11 @@ export async function getClientById(id) {
 
 export async function saveClient(clientData) {
   try {
+    // Handle empty nfcId as null to avoid unique constraint violations
+    if (clientData.nfcId === "") {
+      clientData.nfcId = null;
+    }
+
     if (clientData.id) {
       // Update existing
       const [updated] = await Client.update(clientData, {
@@ -39,10 +84,13 @@ export async function saveClient(clientData) {
     }
 
     // Create new
-    const newClient = await Client.create({
-      ...clientData,
-      id: clientData.id || Date.now().toString(), // Fallback ID generation if none provided
-    });
+    // If id is not provided, let the database auto-increment it
+    const createData = { ...clientData };
+    if (!createData.id) {
+      delete createData.id;
+    }
+
+    const newClient = await Client.create(createData);
     return newClient.toJSON();
   } catch (error) {
     console.error("Error saving client:", error);

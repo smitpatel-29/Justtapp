@@ -248,10 +248,12 @@ END:VCARD`;
   const theme = client.theme || "dark";
   const customTheme = client.customTheme || {};
 
-  const defaultGradient = `linear-gradient(135deg, hsl(${client.name.length * 20}, 70%, 50%), hsl(${client.name.length * 20 + 40}, 80%, 60%))`;
-  const coverStyle = client.coverImage
-    ? { backgroundImage: `url(${client.coverImage})` }
-    : { background: defaultGradient };
+  const defaultCover = "/uploads/1771247096988-coverimage.jpeg";
+  const coverStyle = {
+    backgroundImage: `url(${client.coverImage || defaultCover})`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+  };
 
   const getThemeStyles = () => {
     const baseStyles = {};
@@ -355,7 +357,12 @@ END:VCARD`;
           <div className={styles.profileSection}>
             <div className={styles.avatarWrapper}>
               <img
-                src={client.avatar}
+                src={
+                  client.avatar ||
+                  `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                    client.name,
+                  )}&background=random&color=fff&size=200`
+                }
                 alt={client.name}
                 className={styles.avatar}
               />

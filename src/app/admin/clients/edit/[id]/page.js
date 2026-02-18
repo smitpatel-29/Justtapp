@@ -18,9 +18,14 @@ export default function EditClientPage() {
       fetch(`/api/clients`)
         .then((res) => res.json())
         .then((data) => {
-          const found = data.find((c) => c.id === id);
-          setClient(found);
-          setLoading(false);
+          const found = data.find((c) => c.id == id);
+          if (found) {
+            setLoading(false);
+            setClient(found);
+          } else {
+            console.error("Client not found with ID:", id);
+            setLoading(false);
+          }
         })
         .catch((err) => {
           console.error(err);
