@@ -1,7 +1,7 @@
 "use client";
 import styles from "./AdminLayout.module.css";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Users,
@@ -11,6 +11,12 @@ import {
 
 export default function AdminLayout({ children, title, actions }) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await fetch("/api/admin/logout", { method: "POST" });
+    router.push("/admin/login");
+  };
 
   const isLinkActive = (path) => pathname === path;
 
@@ -71,9 +77,16 @@ export default function AdminLayout({ children, title, actions }) {
             <h1 className={styles.pageTitle}>{title}</h1>
             <div className={styles.headerActions}>
               {actions}
-              <div className={styles.userProfile}>
-                <div className={styles.profileAvatar}>A</div>
-                <span className={styles.profileName}>Admin</span>
+              <div className={styles.userProfileContainer}>
+                <div className={styles.userProfile}>
+                  <div className={styles.profileAvatar}>A</div>
+                  <span className={styles.profileName}>Admin</span>
+                </div>
+                <div className={styles.logoutMenu}>
+                  <button onClick={handleLogout} className={styles.logoutBtn}>
+                    Log Out
+                  </button>
+                </div>
               </div>
             </div>
           </header>

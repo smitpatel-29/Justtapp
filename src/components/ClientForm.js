@@ -38,6 +38,7 @@ export default function ClientForm({ initialData = null, onSubmit }) {
       initialData?.nfcId ||
       Math.random().toString(36).substr(2, 8).toUpperCase(),
     theme: initialData?.theme || "dark",
+    layout: initialData?.layout || "classic",
     customTheme: initialData?.customTheme || {
       background: "#0f172a",
       textPrimary: "#ffffff",
@@ -116,7 +117,11 @@ export default function ClientForm({ initialData = null, onSubmit }) {
 
   return (
     <>
-      <form onSubmit={handleSubmit} className={styles.formContainer}>
+      <form
+        id="clientForm"
+        onSubmit={handleSubmit}
+        className={styles.formContainer}
+      >
         {/* Tabs */}
         <div className={styles.tabContainer}>
           <button
@@ -526,53 +531,267 @@ export default function ClientForm({ initialData = null, onSubmit }) {
                   <option value="classic">Classic Layout</option>
                   <option value="modern">Modern Layout</option>
                   <option value="minimal">Minimal Layout</option>
+                  <option value="custom">Custom Layout</option>
                 </select>
               </div>
+
+              {formData.layout === "custom" && (
+                <div
+                  style={{
+                    marginTop: "1rem",
+                    padding: "1.25rem",
+                    background: "rgba(0,0,0,0.2)",
+                    border: "1px solid rgba(255,255,255,0.05)",
+                    borderRadius: "8px",
+                  }}
+                >
+                  <h4
+                    style={{
+                      color: "white",
+                      marginBottom: "0.5rem",
+                      fontSize: "1rem",
+                    }}
+                  >
+                    Custom HTML Override
+                  </h4>
+                  <p
+                    style={{
+                      color: "#94a3b8",
+                      fontSize: "0.85rem",
+                      marginBottom: "1rem",
+                    }}
+                  >
+                    Provide full custom HTML to completely override the default
+                    client profile template.
+                  </p>
+
+                  <div className={styles.inputGroup}>
+                    <label>Custom HTML Code</label>
+                    <textarea
+                      value={formData.customTheme?.customHtml || ""}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          customTheme: {
+                            ...formData.customTheme,
+                            customHtml: e.target.value,
+                          },
+                        })
+                      }
+                      className={styles.textarea}
+                      rows={12}
+                      placeholder="<!-- Paste your full custom HTML layout here -->"
+                      style={{
+                        fontFamily: "monospace",
+                        fontSize: "0.85rem",
+                        whiteSpace: "pre",
+                        overflowX: "auto",
+                      }}
+                    />
+                    <p
+                      style={{
+                        color: "#94a3b8",
+                        fontSize: "0.8rem",
+                        marginTop: "0.5rem",
+                        lineHeight: "1.4",
+                      }}
+                    >
+                      Note: You must manually enter the client's information
+                      inside your custom HTML as this completely overrides the
+                      template.
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className={`${styles.formSection} ${styles.themeSection}`}>
               <h3 className={styles.sectionTitle}>
                 <Palette size={20} /> Color Theme
               </h3>
-              <div className={styles.inputGroup}>
+              <div
+                className={styles.inputGroup}
+                style={{
+                  opacity: formData.layout === "custom" ? 0.5 : 1,
+                  pointerEvents: formData.layout === "custom" ? "none" : "auto",
+                }}
+              >
                 <select
                   name="theme"
                   value={formData.theme}
                   onChange={handleChange}
                   className={styles.select}
                   style={{ background: "#0f172a" }}
+                  disabled={formData.layout === "custom"}
                 >
                   <option value="dark">Dark Theme (Default)</option>
                   <option value="light">Light Theme</option>
                   <option value="blue">Blue Corporate</option>
                   <option value="custom">Custom Theme</option>
                 </select>
+                {formData.layout === "custom" && (
+                  <p
+                    style={{
+                      color: "#94a3b8",
+                      fontSize: "0.8rem",
+                      marginTop: "0.5rem",
+                    }}
+                  >
+                    Color theme is overridden by your custom layout settings.
+                  </p>
+                )}
               </div>
+
+              {/* Custom Theme Colors block (for Custom Theme or Custom Layout) */}
+              {(formData.theme === "custom" ||
+                formData.layout === "custom") && (
+                <div
+                  style={{
+                    marginTop: "1.5rem",
+                    padding: "1.25rem",
+                    background: "rgba(0,0,0,0.2)",
+                    border: "1px solid rgba(255,255,255,0.05)",
+                    borderRadius: "8px",
+                  }}
+                >
+                  <h4
+                    style={{
+                      color: "white",
+                      marginBottom: "0.5rem",
+                      fontSize: "1rem",
+                    }}
+                  >
+                    Custom Theme Colors
+                  </h4>
+                  <p
+                    style={{
+                      color: "#94a3b8",
+                      fontSize: "0.85rem",
+                      marginBottom: "1rem",
+                    }}
+                  >
+                    Define specific colors and stylesheet for this specific
+                    client.
+                  </p>
+
+                  <div className={styles.formGrid}>
+                    <div className={styles.inputGroup}>
+                      <label>Background Color</label>
+                      <input
+                        type="color"
+                        value={formData.customTheme?.background || "#0f172a"}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            customTheme: {
+                              ...formData.customTheme,
+                              background: e.target.value,
+                            },
+                          })
+                        }
+                        className={styles.input}
+                        style={{
+                          padding: "0.2rem",
+                          height: "45px",
+                          cursor: "pointer",
+                        }}
+                      />
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label>Text Color</label>
+                      <input
+                        type="color"
+                        value={formData.customTheme?.textPrimary || "#ffffff"}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            customTheme: {
+                              ...formData.customTheme,
+                              textPrimary: e.target.value,
+                            },
+                          })
+                        }
+                        className={styles.input}
+                        style={{
+                          padding: "0.2rem",
+                          height: "45px",
+                          cursor: "pointer",
+                        }}
+                      />
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label>Accent Color</label>
+                      <input
+                        type="color"
+                        value={formData.customTheme?.accentColor || "#60a5fa"}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            customTheme: {
+                              ...formData.customTheme,
+                              accentColor: e.target.value,
+                            },
+                          })
+                        }
+                        className={styles.input}
+                        style={{
+                          padding: "0.2rem",
+                          height: "45px",
+                          cursor: "pointer",
+                        }}
+                      />
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label>Button Background</label>
+                      <input
+                        type="color"
+                        value={formData.customTheme?.buttonBg || "#3b82f6"}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            customTheme: {
+                              ...formData.customTheme,
+                              buttonBg: e.target.value,
+                            },
+                          })
+                        }
+                        className={styles.input}
+                        style={{
+                          padding: "0.2rem",
+                          height: "45px",
+                          cursor: "pointer",
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div
+                    className={styles.inputGroup}
+                    style={{ marginTop: "1rem" }}
+                  >
+                    <label>Custom CSS (Optional)</label>
+                    <textarea
+                      value={formData.customTheme?.customCss || ""}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          customTheme: {
+                            ...formData.customTheme,
+                            customCss: e.target.value,
+                          },
+                        })
+                      }
+                      className={styles.textarea}
+                      rows={4}
+                      placeholder="/* Add client-specific custom CSS styles here */"
+                      style={{ fontFamily: "monospace", fontSize: "0.85rem" }}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </>
         )}
-
-        <div className={styles.btnGroup}>
-          <button
-            type="button"
-            className={styles.btnCancel}
-            onClick={() => router.back()}
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            className={styles.btnSave}
-            disabled={loading}
-            style={{ opacity: loading ? 0.7 : 1 }}
-          >
-            {loading
-              ? "Saving..."
-              : initialData
-                ? "Update Client"
-                : "Create Client"}
-          </button>
-        </div>
       </form>
 
       <MediaManager

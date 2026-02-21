@@ -15,6 +15,9 @@ export const metadata = {
   title: "Just Tapp | The Future of Networking",
   description:
     "Create your digital business card and share it instantly with NFC.",
+  icons: {
+    icon: "/assets/faviconjust.png",
+  },
 };
 
 export default function RootLayout({ children }) {

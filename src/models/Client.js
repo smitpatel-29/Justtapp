@@ -39,6 +39,10 @@ const Client = sequelize.define(
       type: DataTypes.JSON,
       defaultValue: {},
     },
+    layout: {
+      type: DataTypes.STRING,
+      defaultValue: "classic",
+    },
     subscriptionType: {
       type: DataTypes.STRING,
       defaultValue: "limited",

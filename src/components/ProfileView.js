@@ -247,6 +247,7 @@ END:VCARD`;
   // Theme Logic
   const theme = client.theme || "dark";
   const customTheme = client.customTheme || {};
+  const layout = client.layout || "classic";
 
   const defaultCover = "/uploads/1771247096988-coverimage.jpeg";
   const coverStyle = {
@@ -264,10 +265,14 @@ END:VCARD`;
         "--container-bg": "white",
         "--text-primary": "#0f172a",
         "--text-secondary": "#64748b",
-        "--card-bg": "#e2e8f0",
-        "--card-hover": "#cbd5e1",
+        "--text-tertiary": "#94a3b8",
+        "--card-bg": "#f8fafc",
+        "--card-hover": "#e2e8f0",
         "--button-text": "white",
         "--header-gradient-end": "rgba(255,255,255,1)",
+        "--border-color": "rgba(0,0,0,0.08)",
+        "--icon-bg": "rgba(0,0,0,0.4)",
+        "--icon-color": "white",
       };
     } else if (theme === "blue") {
       return {
@@ -275,9 +280,13 @@ END:VCARD`;
         "--container-bg": "linear-gradient(to bottom, #1e3a8a, #172554)",
         "--text-primary": "white",
         "--text-secondary": "#bfdbfe",
+        "--text-tertiary": "#93c5fd",
         "--card-bg": "rgba(255,255,255,0.1)",
         "--card-hover": "rgba(255,255,255,0.2)",
         "--header-gradient-end": "rgba(30, 58, 138, 0)",
+        "--border-color": "rgba(255,255,255,0.1)",
+        "--icon-bg": "rgba(0,0,0,0.4)",
+        "--icon-color": "white",
       };
     } else if (theme === "custom") {
       return {
@@ -285,10 +294,14 @@ END:VCARD`;
         "--container-bg": customTheme.containerBg || "#0f172a",
         "--text-primary": customTheme.textPrimary || "white",
         "--text-secondary": customTheme.textSecondary || "#94a3b8",
+        "--text-tertiary": customTheme.textSecondary || "#cbd5e1",
         "--card-bg": customTheme.cardBg || "rgba(255,255,255,0.05)",
         "--accent-color": customTheme.accentColor || "#60a5fa",
         "--button-bg": customTheme.buttonBg || "#3b82f6",
         "--header-gradient-end": "rgba(0,0,0,0)",
+        "--border-color": "rgba(255,255,255,0.1)",
+        "--icon-bg": "rgba(0,0,0,0.4)",
+        "--icon-color": "white",
       };
     }
     // Default Dark
@@ -297,8 +310,12 @@ END:VCARD`;
       "--container-bg": "#000000",
       "--text-primary": "white",
       "--text-secondary": "#94a3b8",
+      "--text-tertiary": "#cbd5e1",
       "--card-bg": "rgba(255,255,255,0.05)",
       "--header-gradient-end": "rgba(0,0,0,1)",
+      "--border-color": "rgba(255,255,255,0.1)",
+      "--icon-bg": "rgba(0,0,0,0.4)",
+      "--icon-color": "white",
     };
   };
 
@@ -315,255 +332,281 @@ END:VCARD`;
 
   return (
     <div className={styles.wrapper} style={getThemeStyles()}>
-      <div className={styles.mobileContainer}>
-        {/* Header Section */}
-        <header className={styles.header}>
-          <div className={styles.coverImage} style={coverStyle}>
-            <button className={styles.qrBtn} onClick={() => setShowQr(!showQr)}>
-              <QrCode size={20} />
-            </button>
-            {/* Language Switcher Button */}
-            <button
-              className={styles.langBtn}
-              onClick={() => setShowLangMenu(!showLangMenu)}
-            >
-              <Languages size={20} />
-            </button>
-          </div>
+      {layout === "custom" && customTheme.customCss && (
+        <style dangerouslySetInnerHTML={{ __html: customTheme.customCss }} />
+      )}
 
-          {/* Language Menu */}
-          {showLangMenu && (
-            <div
-              className={styles.langMenuOverlay}
-              onClick={() => setShowLangMenu(false)}
-            >
-              <div className={styles.langMenu}>
-                {Object.entries(languageNames).map(([code, name]) => (
-                  <button
-                    key={code}
-                    className={`${styles.langOption} ${lang === code ? styles.activeLang : ""}`}
-                    onClick={() => {
-                      setLang(code);
-                      setShowLangMenu(false);
+      {layout === "custom" && customTheme.customHtml ? (
+        <div style={{ width: "100%", height: "100%", minHeight: "100vh" }}>
+          <div dangerouslySetInnerHTML={{ __html: customTheme.customHtml }} />
+        </div>
+      ) : (
+        <div
+          className={`${styles.mobileContainer} ${layout && styles[layout + "Layout"] ? styles[layout + "Layout"] : ""}`}
+        >
+          {/* Header Section */}
+          <header className={styles.header}>
+            <div className={styles.coverImage} style={coverStyle}>
+              <button
+                className={styles.qrBtn}
+                onClick={() => setShowQr(!showQr)}
+              >
+                <QrCode size={20} />
+              </button>
+              {/* Language Switcher Button */}
+              <button
+                className={styles.langBtn}
+                onClick={() => setShowLangMenu(!showLangMenu)}
+              >
+                <Languages size={20} />
+              </button>
+            </div>
+
+            {/* Language Menu */}
+            {showLangMenu && (
+              <div
+                className={styles.langMenuOverlay}
+                onClick={() => setShowLangMenu(false)}
+              >
+                <div className={styles.langMenu}>
+                  {Object.entries(languageNames).map(([code, name]) => (
+                    <button
+                      key={code}
+                      className={`${styles.langOption} ${lang === code ? styles.activeLang : ""}`}
+                      onClick={() => {
+                        setLang(code);
+                        setShowLangMenu(false);
+                      }}
+                    >
+                      {name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className={styles.profileSection}>
+              <div className={styles.avatarWrapper}>
+                <img
+                  src={
+                    client.avatar ||
+                    `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                      client.name,
+                    )}&background=random&color=fff&size=200`
+                  }
+                  alt={client.name}
+                  className={styles.avatar}
+                />
+                <div className={styles.verifiedBadge}>
+                  <CheckCircle size={16} fill="#3b82f6" color="white" />
+                </div>
+              </div>
+
+              <div className={styles.info}>
+                <h1 className={styles.name}>{client.name}</h1>
+                <p className={styles.title}>{client.title}</p>
+                <p className={styles.company}>{client.company}</p>
+                <p className={styles.bio}>{client.bio}</p>
+              </div>
+
+              <div className={styles.headerActions}>
+                <button
+                  onClick={handleSaveContact}
+                  className={styles.primaryBtn}
+                >
+                  {t.saveContact}
+                </button>
+                <button onClick={handleShare} className={styles.iconBtn}>
+                  <Share2 size={20} />
+                </button>
+              </div>
+            </div>
+          </header>
+
+          {/* Bento Grid Content */}
+          <div className={styles.content}>
+            <div className={styles.sectionLabel}>{t.contact}</div>
+            <div className={styles.grid}>
+              {client.email && (
+                <a
+                  href={`mailto:${client.email}`}
+                  className={`${styles.card} ${styles.contactCard}`}
+                >
+                  <div
+                    className={styles.iconBox}
+                    style={{
+                      background: "rgba(59, 130, 246, 0.2)",
+                      color: "#60a5fa",
                     }}
                   >
-                    {name}
-                  </button>
-                ))}
+                    <Mail size={20} />
+                  </div>
+                  <div className={styles.cardText}>
+                    <span className={styles.cardLabel}>{t.email}</span>
+                    <span className={styles.cardValue}>{client.email}</span>
+                  </div>
+                </a>
+              )}
+
+              {client.phone && (
+                <a
+                  href={`tel:${client.phone}`}
+                  className={`${styles.card} ${styles.contactCard}`}
+                >
+                  <div
+                    className={styles.iconBox}
+                    style={{
+                      background: "rgba(16, 185, 129, 0.2)",
+                      color: "#34d399",
+                    }}
+                  >
+                    <Phone size={20} />
+                  </div>
+                  <div className={styles.cardText}>
+                    <span className={styles.cardLabel}>{t.phone}</span>
+                    <span className={styles.cardValue}>{client.phone}</span>
+                  </div>
+                </a>
+              )}
+
+              {client.address && (
+                <div className={`${styles.card} ${styles.contactCard}`}>
+                  <div
+                    className={styles.iconBox}
+                    style={{
+                      background: "rgba(236, 72, 153, 0.2)",
+                      color: "#f472b6",
+                    }}
+                  >
+                    <MapPin size={20} />
+                  </div>
+                  <div className={styles.cardText}>
+                    <span className={styles.cardLabel}>{t.address}</span>
+                    <span
+                      className={styles.cardValue}
+                      style={{ fontSize: "0.9rem" }}
+                    >
+                      {client.address}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {client.website && (
+                <a
+                  href={client.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.card}
+                >
+                  <div
+                    className={styles.iconBox}
+                    style={{
+                      background: "rgba(139, 92, 246, 0.2)",
+                      color: "#a78bfa",
+                    }}
+                  >
+                    <Globe size={20} />
+                  </div>
+                  <div className={styles.cardText}>
+                    <span className={styles.cardLabel}>{t.website}</span>
+                    <span className={styles.cardValue}>
+                      {client.website
+                        .replace(/^https?:\/\//, "")
+                        .replace(/\/$/, "")}
+                    </span>
+                  </div>
+                  <div style={{ marginLeft: "auto", opacity: 0.5 }}>
+                    <ExternalLink size={16} />
+                  </div>
+                </a>
+              )}
+            </div>
+
+            <div className={styles.sectionLabel}>{t.connect}</div>
+            <div className={styles.socialGrid}>
+              {client.socials?.map((social, idx) => {
+                const Icon = getSocialIcon(social.platform);
+                return (
+                  <a
+                    key={idx}
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.socialCard}
+                  >
+                    <Icon size={24} />
+                    <span>{social.platform}</span>
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+
+          <footer className={styles.footer}>
+            <a href="/" className={styles.branding}>
+              <span style={{ opacity: 0.7 }}>{t.createdWith}</span>{" "}
+              <img
+                src="https://justtapp.in/logo/Just%20Tap%20White%20Logo.png"
+                alt="Just Tapp"
+                style={{
+                  height: "24px",
+                  verticalAlign: "middle",
+                  marginLeft: "5px",
+                }}
+              />
+            </a>
+          </footer>
+
+          {/* QR Code Modal Overlay */}
+          {showQr && (
+            <div
+              className={styles.modalOverlay}
+              onClick={() => setShowQr(false)}
+            >
+              <div
+                className={styles.qrCard}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <h3>{t.shareProfile}</h3>
+                <div className={styles.qrPlaceholder}>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      padding: "1rem",
+                      background: "white",
+                      borderRadius: "8px",
+                    }}
+                  >
+                    <QRCodeCanvas
+                      value={
+                        typeof window !== "undefined"
+                          ? window.location.href
+                          : ""
+                      }
+                      size={200}
+                      bgColor={"#ffffff"}
+                      fgColor={"#000000"}
+                      level={"L"}
+                    />
+                  </div>
+                </div>
+                <p>
+                  {t.scanToView} {client.name}
+                </p>
+                <button
+                  className={styles.closeBtn}
+                  onClick={() => setShowQr(false)}
+                >
+                  {t.close}
+                </button>
               </div>
             </div>
           )}
-
-          <div className={styles.profileSection}>
-            <div className={styles.avatarWrapper}>
-              <img
-                src={
-                  client.avatar ||
-                  `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                    client.name,
-                  )}&background=random&color=fff&size=200`
-                }
-                alt={client.name}
-                className={styles.avatar}
-              />
-              <div className={styles.verifiedBadge}>
-                <CheckCircle size={16} fill="#3b82f6" color="white" />
-              </div>
-            </div>
-
-            <div className={styles.info}>
-              <h1 className={styles.name}>{client.name}</h1>
-              <p className={styles.title}>{client.title}</p>
-              <p className={styles.company}>{client.company}</p>
-              <p className={styles.bio}>{client.bio}</p>
-            </div>
-
-            <div className={styles.headerActions}>
-              <button onClick={handleSaveContact} className={styles.primaryBtn}>
-                {t.saveContact}
-              </button>
-              <button onClick={handleShare} className={styles.iconBtn}>
-                <Share2 size={20} />
-              </button>
-            </div>
-          </div>
-        </header>
-
-        {/* Bento Grid Content */}
-        <div className={styles.content}>
-          <div className={styles.sectionLabel}>{t.contact}</div>
-          <div className={styles.grid}>
-            {client.email && (
-              <a
-                href={`mailto:${client.email}`}
-                className={`${styles.card} ${styles.contactCard}`}
-              >
-                <div
-                  className={styles.iconBox}
-                  style={{
-                    background: "rgba(59, 130, 246, 0.2)",
-                    color: "#60a5fa",
-                  }}
-                >
-                  <Mail size={20} />
-                </div>
-                <div className={styles.cardText}>
-                  <span className={styles.cardLabel}>{t.email}</span>
-                  <span className={styles.cardValue}>{client.email}</span>
-                </div>
-              </a>
-            )}
-
-            {client.phone && (
-              <a
-                href={`tel:${client.phone}`}
-                className={`${styles.card} ${styles.contactCard}`}
-              >
-                <div
-                  className={styles.iconBox}
-                  style={{
-                    background: "rgba(16, 185, 129, 0.2)",
-                    color: "#34d399",
-                  }}
-                >
-                  <Phone size={20} />
-                </div>
-                <div className={styles.cardText}>
-                  <span className={styles.cardLabel}>{t.phone}</span>
-                  <span className={styles.cardValue}>{client.phone}</span>
-                </div>
-              </a>
-            )}
-
-            {client.address && (
-              <div className={`${styles.card} ${styles.contactCard}`}>
-                <div
-                  className={styles.iconBox}
-                  style={{
-                    background: "rgba(236, 72, 153, 0.2)",
-                    color: "#f472b6",
-                  }}
-                >
-                  <MapPin size={20} />
-                </div>
-                <div className={styles.cardText}>
-                  <span className={styles.cardLabel}>{t.address}</span>
-                  <span
-                    className={styles.cardValue}
-                    style={{ fontSize: "0.9rem" }}
-                  >
-                    {client.address}
-                  </span>
-                </div>
-              </div>
-            )}
-
-            {client.website && (
-              <a
-                href={client.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.card}
-              >
-                <div
-                  className={styles.iconBox}
-                  style={{
-                    background: "rgba(139, 92, 246, 0.2)",
-                    color: "#a78bfa",
-                  }}
-                >
-                  <Globe size={20} />
-                </div>
-                <div className={styles.cardText}>
-                  <span className={styles.cardLabel}>{t.website}</span>
-                  <span className={styles.cardValue}>
-                    {client.website
-                      .replace(/^https?:\/\//, "")
-                      .replace(/\/$/, "")}
-                  </span>
-                </div>
-                <div style={{ marginLeft: "auto", opacity: 0.5 }}>
-                  <ExternalLink size={16} />
-                </div>
-              </a>
-            )}
-          </div>
-
-          <div className={styles.sectionLabel}>{t.connect}</div>
-          <div className={styles.socialGrid}>
-            {client.socials?.map((social, idx) => {
-              const Icon = getSocialIcon(social.platform);
-              return (
-                <a
-                  key={idx}
-                  href={social.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.socialCard}
-                >
-                  <Icon size={24} />
-                  <span>{social.platform}</span>
-                </a>
-              );
-            })}
-          </div>
         </div>
-
-        <footer className={styles.footer}>
-          <a href="/" className={styles.branding}>
-            <span style={{ opacity: 0.7 }}>{t.createdWith}</span>{" "}
-            <img
-              src="https://justtapp.in/logo/Just%20Tap%20White%20Logo.png"
-              alt="Just Tapp"
-              style={{
-                height: "24px",
-                verticalAlign: "middle",
-                marginLeft: "5px",
-              }}
-            />
-          </a>
-        </footer>
-
-        {/* QR Code Modal Overlay */}
-        {showQr && (
-          <div className={styles.modalOverlay} onClick={() => setShowQr(false)}>
-            <div className={styles.qrCard} onClick={(e) => e.stopPropagation()}>
-              <h3>{t.shareProfile}</h3>
-              <div className={styles.qrPlaceholder}>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    padding: "1rem",
-                    background: "white",
-                    borderRadius: "8px",
-                  }}
-                >
-                  <QRCodeCanvas
-                    value={
-                      typeof window !== "undefined" ? window.location.href : ""
-                    }
-                    size={200}
-                    bgColor={"#ffffff"}
-                    fgColor={"#000000"}
-                    level={"L"}
-                  />
-                </div>
-              </div>
-              <p>
-                {t.scanToView} {client.name}
-              </p>
-              <button
-                className={styles.closeBtn}
-                onClick={() => setShowQr(false)}
-              >
-                {t.close}
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
+      )}
     </div>
   );
 }
