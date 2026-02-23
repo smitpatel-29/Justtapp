@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
-import { getClientById, saveClient, deleteClient } from "@/lib/db";
+import {
+  getClientById,
+  saveClient,
+  deleteClient,
+  permanentDeleteClient,
+} from "@/lib/db";
 
 export async function GET(request, { params }) {
   const { id } = await params;
@@ -36,6 +41,14 @@ export async function PUT(request, { params }) {
 
 export async function DELETE(request, { params }) {
   const { id } = await params;
-  await deleteClient(id);
+  const { searchParams } = new URL(request.url);
+  const isPermanent = searchParams.get("permanent") === "true";
+
+  if (isPermanent) {
+    await permanentDeleteClient(id);
+  } else {
+    await deleteClient(id);
+  }
+
   return NextResponse.json({ success: true });
 }

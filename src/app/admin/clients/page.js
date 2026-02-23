@@ -71,6 +71,28 @@ export default function ClientsPage() {
     }
   };
 
+  const handlePermanentDelete = async (id) => {
+    if (
+      !confirm(
+        "Are you sure you want to PERMANENTLY delete this client? This cannot be undone.",
+      )
+    )
+      return;
+    try {
+      const res = await fetch(`/api/clients/${id}?permanent=true`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        setClients(clients.filter((c) => c.id !== id));
+      } else {
+        alert("Failed to permanently delete client");
+      }
+    } catch (e) {
+      console.error(e);
+      alert("Error permanently deleting client");
+    }
+  };
+
   const filteredClients = clients.filter(
     (client) =>
       client.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -218,18 +240,33 @@ export default function ClientsPage() {
 
                   <div className={styles.btnGroup}>
                     {showTrash ? (
-                      <button
-                        className={`${styles.iconBtn} ${styles.btnEdit}`}
-                        onClick={() => handleRestore(client.id)}
-                        title="Restore Client"
-                        style={{ width: "auto", padding: "0.5rem 1rem" }}
-                      >
-                        <RotateCcw
-                          size={18}
-                          style={{ marginRight: "0.5rem" }}
-                        />{" "}
-                        Restore
-                      </button>
+                      <>
+                        <button
+                          className={`${styles.iconBtn} ${styles.btnEdit}`}
+                          onClick={() => handleRestore(client.id)}
+                          title="Restore Client"
+                          style={{ width: "auto", padding: "0.5rem 1rem" }}
+                        >
+                          <RotateCcw
+                            size={18}
+                            style={{ marginRight: "0.5rem" }}
+                          />{" "}
+                          Restore
+                        </button>
+                        <button
+                          className={`${styles.iconBtn} ${styles.btnDelete}`}
+                          onClick={() => handlePermanentDelete(client.id)}
+                          title="Permanently Delete Client"
+                          style={{
+                            width: "auto",
+                            padding: "0.5rem 1rem",
+                            marginLeft: "0.5rem",
+                          }}
+                        >
+                          <Trash2 size={18} style={{ marginRight: "0.5rem" }} />{" "}
+                          Delete
+                        </button>
+                      </>
                     ) : (
                       <>
                         <Link
