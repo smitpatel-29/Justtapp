@@ -22,7 +22,7 @@ export async function POST(request) {
     return NextResponse.json(savedClient);
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to create client" },
+      { error: "Failed to create client", details: error.message },
       { status: 500 },
     );
   }
