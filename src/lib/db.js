@@ -76,10 +76,10 @@ export async function getClientById(id) {
 export async function saveClient(clientData) {
   try {
     // Handle empty nfcId or slug as null to avoid unique constraint violations
-    if (clientData.nfcId === "") {
+    if (!clientData.nfcId) {
       clientData.nfcId = null;
     }
-    if (clientData.customSlug === "") {
+    if (!clientData.customSlug) {
       clientData.customSlug = null;
     }
 
