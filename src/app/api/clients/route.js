@@ -4,13 +4,14 @@ import { getClients, saveClient, getDeletedClients } from "@/lib/db";
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const showDeleted = searchParams.get("deleted") === "true";
+  const isOldClient = searchParams.get("old") === "true";
 
   if (showDeleted) {
-    const deletedClients = await getDeletedClients();
+    const deletedClients = await getDeletedClients(isOldClient);
     return NextResponse.json(deletedClients);
   }
 
-  const clients = await getClients();
+  const clients = await getClients(isOldClient);
   return NextResponse.json(clients);
 }
 

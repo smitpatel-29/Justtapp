@@ -30,6 +30,15 @@ const Client = sequelize.define(
       unique: true,
       allowNull: true,
     },
+    isOldClient: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    customSlug: {
+      type: DataTypes.STRING,
+      unique: true,
+      allowNull: true,
+    },
     password: DataTypes.STRING,
     theme: {
       type: DataTypes.STRING,

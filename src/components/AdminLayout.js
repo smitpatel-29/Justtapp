@@ -7,6 +7,7 @@ import {
   Users,
   Image as ImageIcon,
   Settings,
+  Archive,
 } from "lucide-react";
 
 export default function AdminLayout({ children, title, actions }) {
@@ -49,6 +50,17 @@ export default function AdminLayout({ children, title, actions }) {
           >
             <Users size={20} />
             Clients
+          </Link>
+          <Link
+            href="/admin/old-clients"
+            className={`${styles.navItem} ${
+              pathname.startsWith("/admin/old-clients")
+                ? styles.navItemActive
+                : ""
+            }`}
+          >
+            <Archive size={20} />
+            Old Clients
           </Link>
           <Link
             href="/admin/media"

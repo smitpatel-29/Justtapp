@@ -9,9 +9,13 @@ Client.sync({ alter: true }).catch((err) =>
 
 import { Op } from "sequelize";
 
-export async function getClients() {
+export async function getClients(isOldClient = false) {
   try {
-    const clients = await Client.findAll();
+    const clients = await Client.findAll({
+      where: {
+        isOldClient: isOldClient ? true : { [Op.not]: true },
+      },
+    });
     return clients.map((c) => c.toJSON());
   } catch (error) {
     console.error("Error fetching clients:", error);
@@ -19,10 +23,13 @@ export async function getClients() {
   }
 }
 
-export async function getDeletedClients() {
+export async function getDeletedClients(isOldClient = false) {
   try {
     const clients = await Client.findAll({
-      where: { deletedAt: { [Op.ne]: null } },
+      where: {
+        deletedAt: { [Op.ne]: null },
+        isOldClient: isOldClient ? true : { [Op.not]: true },
+      },
       paranoid: false,
     });
     return clients.map((c) => c.toJSON());
@@ -68,9 +75,12 @@ export async function getClientById(id) {
 
 export async function saveClient(clientData) {
   try {
-    // Handle empty nfcId as null to avoid unique constraint violations
+    // Handle empty nfcId or slug as null to avoid unique constraint violations
     if (clientData.nfcId === "") {
       clientData.nfcId = null;
+    }
+    if (clientData.customSlug === "") {
+      clientData.customSlug = null;
     }
 
     if (clientData.id) {

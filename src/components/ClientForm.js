@@ -15,7 +15,11 @@ import {
 import styles from "./ClientForm.module.css";
 import MediaManager from "@/components/MediaManager";
 
-export default function ClientForm({ initialData = null, onSubmit }) {
+export default function ClientForm({
+  initialData = null,
+  onSubmit,
+  isOldClient = false,
+}) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [showMedia, setShowMedia] = useState(false);
@@ -36,7 +40,10 @@ export default function ClientForm({ initialData = null, onSubmit }) {
     address: initialData?.address || "",
     nfcId:
       initialData?.nfcId ||
-      Math.random().toString(36).substr(2, 8).toUpperCase(),
+      (!isOldClient
+        ? Math.random().toString(36).substr(2, 8).toUpperCase()
+        : ""),
+    customSlug: initialData?.customSlug || "",
     theme: initialData?.theme || "dark",
     layout: initialData?.layout || "classic",
     customTheme: initialData?.customTheme || {
@@ -93,7 +100,7 @@ export default function ClientForm({ initialData = null, onSubmit }) {
     pushSocial("Snapchat", formData.snapchat);
     pushSocial("Map", formData.map);
 
-    const payload = { ...formData, socials };
+    const payload = { ...formData, socials, isOldClient };
 
     try {
       await onSubmit(payload);
@@ -448,16 +455,29 @@ export default function ClientForm({ initialData = null, onSubmit }) {
                 <Lock size={20} /> Admin & Plan
               </h3>
               <div className={styles.formGrid}>
-                <div className={styles.inputGroup}>
-                  <label>NFC Tag ID</label>
-                  <input
-                    name="nfcId"
-                    value={formData.nfcId}
-                    onChange={handleChange}
-                    placeholder="Unique Tag Serial"
-                    className={styles.input}
-                  />
-                </div>
+                {isOldClient ? (
+                  <div className={styles.inputGroup}>
+                    <label>Profile URL Slug (e.g. smit-marvaniya)</label>
+                    <input
+                      name="customSlug"
+                      value={formData.customSlug}
+                      onChange={handleChange}
+                      placeholder="smit-marvaniya"
+                      className={styles.input}
+                    />
+                  </div>
+                ) : (
+                  <div className={styles.inputGroup}>
+                    <label>NFC Tag ID</label>
+                    <input
+                      name="nfcId"
+                      value={formData.nfcId}
+                      onChange={handleChange}
+                      placeholder="Unique Tag Serial"
+                      className={styles.input}
+                    />
+                  </div>
+                )}
                 <div className={styles.inputGroup}>
                   <label>Plan Type</label>
                   <select
