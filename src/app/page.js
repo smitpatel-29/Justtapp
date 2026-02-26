@@ -37,8 +37,17 @@ export default function Home() {
           />
         </div>
         <div className={styles.navLinks}>
+          <a href="#features" className={styles.navLink}>
+            Features
+          </a>
+          <a href="#how-it-works" className={styles.navLink}>
+            How It Works
+          </a>
+          <Link href="/shop" className={styles.navLink}>
+            Get Card
+          </Link>
           <Link href="/admin" className={styles.navBtn}>
-            Login / Admin
+            Login
           </Link>
         </div>
       </nav>
@@ -139,7 +148,7 @@ export default function Home() {
       </section>
 
       {/* Why NFC? Benefits Section */}
-      <section className={styles.featuresSection}>
+      <section id="features" className={styles.featuresSection}>
         <motion.div
           className={styles.sectionHeader}
           initial="hidden"
@@ -344,36 +353,48 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* Footer */}
+      {/* Creative Centered Footer */}
       <footer className={styles.footer}>
         <div className={styles.footerGlow}></div>
-        <div className={styles.footerContent}>
-          <div className={styles.footerBrand}>
-            <div className={styles.footerLogoWrapper}>
+        
+        <div className={styles.footerContentCenter}>
+          <motion.div 
+            className={styles.footerBrandCenter}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className={styles.footerLogoGlow}>
               <img
                 src="/assets/logo-white.png"
                 alt="Just Tapp"
-                className={styles.footerLogo}
+                className={styles.footerLogoLarge}
               />
             </div>
-            <p>
-              The last business card you will ever need. Empowering
-              professionals to connect seamlessly in a digital world.
+            <p className={styles.footerTagline}>
+              The Future of Networking is Here.
             </p>
-          </div>
+            <div className={styles.footerSocials}>
+              <a href="#" className={styles.socialIcon} aria-label="Website"><Globe size={20} /></a>
+              <a href="#" className={styles.socialIcon} aria-label="Share"><Share2 size={20} /></a>
+              <a href="#" className={styles.socialIcon} aria-label="Mobile"><Smartphone size={20} /></a>
+            </div>
+          </motion.div>
+        </div>
 
-          <div className={styles.footerNav}>
-            <div className={styles.footerColumn}>
-              <h4>Company</h4>
+        <div className={styles.footerBottomLine}>
+          <div className={styles.footerBottomFlex}>
+            <p>© {new Date().getFullYear()} Just Tapp. All rights reserved.</p>
+            <div className={styles.footerLinksMinimal}>
+              <a href="#features">Features</a>
+              <span className={styles.linkDot}>•</span>
+              <a href="#how-it-works">How It Works</a>
+              <span className={styles.linkDot}>•</span>
+              <Link href="/shop">Order Card</Link>
+              <span className={styles.linkDot}>•</span>
               <Link href="/admin">Admin Login</Link>
             </div>
-          </div>
-        </div>
-        <div className={styles.footerBottom}>
-          <p>© {new Date().getFullYear()} Just Tapp. All rights reserved.</p>
-          <div className={styles.footerLinksRow}>
-            <Link href="#">Privacy Policy</Link>
-            <Link href="#">Terms of Service</Link>
           </div>
         </div>
       </footer>
