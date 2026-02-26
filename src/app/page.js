@@ -37,9 +37,6 @@ export default function Home() {
           />
         </div>
         <div className={styles.navLinks}>
-          <Link href="/c/1" className={styles.navLink}>
-            Demo Profile
-          </Link>
           <Link href="/admin" className={styles.navBtn}>
             Login / Admin
           </Link>
@@ -96,9 +93,9 @@ export default function Home() {
               <Link href="/shop" className={styles.ctaBtn}>
                 Get Your Card <ChevronRight size={18} />
               </Link>
-              <Link href="/c/1" className={styles.secondaryBtn}>
+              <a href="#how-it-works" className={styles.secondaryBtn}>
                 See How It Works
-              </Link>
+              </a>
             </motion.div>
           </motion.div>
 
@@ -241,7 +238,7 @@ export default function Home() {
       </section>
 
       {/* How It Works */}
-      <section className={styles.howItWorks}>
+      <section id="how-it-works" className={styles.howItWorks}>
         <motion.h2
           className={styles.sectionTitle}
           initial={{ opacity: 0, y: 20 }}
@@ -367,15 +364,7 @@ export default function Home() {
 
           <div className={styles.footerNav}>
             <div className={styles.footerColumn}>
-              <h4>Product</h4>
-              <Link href="#">Features</Link>
-              <Link href="#">How It Works</Link>
-              <Link href="#">Pricing</Link>
-            </div>
-            <div className={styles.footerColumn}>
               <h4>Company</h4>
-              <Link href="#">About Us</Link>
-              <Link href="#">Contact</Link>
               <Link href="/admin">Admin Login</Link>
             </div>
           </div>
