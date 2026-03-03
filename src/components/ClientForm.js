@@ -551,6 +551,7 @@ export default function ClientForm({
                   <option value="classic">Classic Layout</option>
                   <option value="modern">Modern Layout</option>
                   <option value="minimal">Minimal Layout</option>
+                  <option value="executive">Executive Layout</option>
                   <option value="custom">Custom Layout</option>
                 </select>
               </div>

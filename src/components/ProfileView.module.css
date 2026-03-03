@@ -489,3 +489,217 @@
 .minimalLayout .contactCard {
   border-radius: 12px;
 }
+
+/* Executive Layout */
+.executiveCard {
+  background: var(--container-bg, white);
+  width: 100%;
+  max-width: 440px;
+  min-height: 85vh;
+  border-radius: 40px;
+  position: relative;
+  box-shadow: 0 40px 80px -20px var(--icon-bg, rgba(0, 0, 0, 0.4));
+  border: 1px solid var(--border-color, rgba(0, 0, 0, 0.05));
+  color: var(--text-primary, #111827);
+  display: flex;
+  flex-direction: column;
+  padding: 3rem 2rem 2rem;
+  overflow: hidden;
+}
+
+.executiveAvatarWrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin-bottom: 1.5rem;
+}
+
+.executiveAvatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  object-fit: cover;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  border: 1px solid var(--border-color, transparent);
+}
+
+.executiveVerified {
+  position: absolute;
+  bottom: -5px;
+  right: -5px;
+  background: var(--container-bg, #0f172a);
+  border-radius: 50%;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--container-bg, white);
+}
+
+.executiveName {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--text-primary, #0f172a);
+  margin-bottom: 0.5rem;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.executiveTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.executiveTitleLine {
+  width: 2px;
+  height: 14px;
+  background: var(--button-bg, #8b5cf6);
+}
+
+.executiveTitle {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--text-tertiary, #6b7280);
+  text-transform: uppercase;
+}
+
+.executiveBio {
+  font-size: 0.9rem;
+  color: var(--text-secondary, #4b5563);
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.executiveSectionLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--text-tertiary, #9ca3af);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.executiveSectionLine {
+  width: 24px;
+  height: 1px;
+  background: var(--border-color, #e5e7eb);
+}
+
+.executiveContactCard {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--container-bg, white);
+  border: 1px solid var(--border-color, #f3f4f6);
+  border-radius: 16px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 15px -5px rgba(0,0,0,0.03);
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.executiveContactCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px var(--icon-bg, rgba(0,0,0,0.05));
+  background: var(--card-bg, #ffffff);
+}
+
+.executiveIconBox {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--card-bg, rgba(0,0,0,0.05));
+  color: var(--button-bg, #8b5cf6);
+}
+
+.executiveContactText {
+  display: flex;
+  flex-direction: column;
+}
+
+.executiveContactLabel {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--text-tertiary, #9ca3af);
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.executiveContactValue {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary, #1f2937);
+}
+
+.executiveSaveBtn {
+  margin-top: auto;
+  margin-bottom: 1rem;
+  width: 100%;
+  background: var(--button-bg, #0f172a);
+  color: var(--button-text, white);
+  border: none;
+  padding: 1.25rem;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  box-shadow: 0 10px 25px -5px var(--icon-bg, rgba(15, 23, 42, 0.3));
+  transition: transform 0.2s, background 0.2s;
+}
+
+.executiveSaveBtn:hover {
+  transform: translateY(-2px);
+  background: var(--card-hover, #1e293b);
+}
+
+.executiveSaveIcon {
+  background: var(--button-text, white);
+  color: var(--button-bg, #0f172a);
+  border-radius: 50%;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.executiveSocialRow {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid var(--border-color, #f3f4f6);
+  margin-top: 1rem;
+  padding-top: 1rem;
+  gap: 0.5rem;
+}
+
+.executiveSocialBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: var(--card-bg, #f8fafc);
+  color: var(--text-secondary, #4b5563);
+  border-radius: 12px;
+  transition: all 0.2s;
+}
+
+.executiveSocialBtn:hover {
+  background: var(--button-bg, #0f172a);
+  color: var(--button-text, white);
+}

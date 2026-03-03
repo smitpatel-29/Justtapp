@@ -21,6 +21,7 @@ import {
   Video,
   Map,
   Languages,
+  Plus,
 } from "lucide-react";
 import styles from "./ProfileView.module.css";
 import { useState, useEffect } from "react";
@@ -244,6 +245,22 @@ END:VCARD`;
     return Globe;
   };
 
+  const getSocialColor = (platform) => {
+    if (!platform) return "currentColor";
+    const p = platform.toLowerCase();
+    if (p.includes("linkedin")) return "#0A66C2";
+    if (p.includes("github")) return "#333333";
+    if (p.includes("instagram")) return "#E1306C";
+    if (p.includes("twitter") || p.includes("x")) return "#000000";
+    if (p.includes("facebook")) return "#1877F2";
+    if (p.includes("youtube")) return "#FF0000";
+    if (p.includes("whatsapp")) return "#25D366";
+    if (p.includes("telegram")) return "#26A5E4";
+    if (p.includes("tiktok")) return "#000000";
+    if (p.includes("snapchat")) return "#FFFC00";
+    return "currentColor";
+  };
+
   // Theme Logic
   const theme = client.theme || "dark";
   const customTheme = client.customTheme || {};
@@ -339,6 +356,111 @@ END:VCARD`;
       {layout === "custom" && customTheme.customHtml ? (
         <div style={{ width: "100%", height: "100%", minHeight: "100vh" }}>
           <div dangerouslySetInnerHTML={{ __html: customTheme.customHtml }} />
+        </div>
+      ) : layout === "executive" ? (
+        <div style={{ width: "100%", minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center", padding: "1rem" }}>
+          <div className={styles.executiveCard}>
+            <button className={styles.qrBtn} style={{ background: "var(--card-bg)", border: "none", color: "var(--text-primary)", backdropFilter: "none" }} onClick={() => setShowQr(!showQr)}>
+              <QrCode size={20} />
+            </button>
+            <button className={styles.langBtn} style={{ background: "var(--card-bg)", border: "none", color: "var(--text-primary)", backdropFilter: "none" }} onClick={() => setShowLangMenu(!showLangMenu)}>
+              <Languages size={20} />
+            </button>
+
+            <div className={styles.executiveAvatarWrapper}>
+              <img src={client.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(client.name)}`} alt={client.name} className={styles.executiveAvatar} />
+              <div className={styles.executiveVerified}>
+                <CheckCircle size={14} fill="var(--button-bg, #3b82f6)" color="var(--container-bg, white)" />
+              </div>
+            </div>
+
+            <h1 className={styles.executiveName}>{client.name}</h1>
+            <div className={styles.executiveTitleRow}>
+              <div className={styles.executiveTitleLine}></div>
+              <span className={styles.executiveTitle}>{client.title} & {client.company}</span>
+            </div>
+
+            <p className={styles.executiveBio}>{client.bio}</p>
+
+            <div className={styles.executiveSectionLabel}>
+              <div className={styles.executiveSectionLine}></div>
+              DIRECT
+            </div>
+
+            {client.email && (
+              <a href={`mailto:${client.email}`} className={styles.executiveContactCard}>
+                <div className={styles.executiveIconBox}><Mail size={18} /></div>
+                <div className={styles.executiveContactText}>
+                  <span className={styles.executiveContactLabel}>{t.email}</span>
+                  <span className={styles.executiveContactValue}>{client.email}</span>
+                </div>
+              </a>
+            )}
+
+            {client.phone && (
+              <a href={`tel:${client.phone}`} className={styles.executiveContactCard}>
+                <div className={styles.executiveIconBox}><Phone size={18} /></div>
+                <div className={styles.executiveContactText}>
+                  <span className={styles.executiveContactLabel}>{t.phone}</span>
+                  <span className={styles.executiveContactValue}>{client.phone}</span>
+                </div>
+              </a>
+            )}
+
+            <div style={{ flex: 1, minHeight: "2rem" }}></div>
+
+            <button onClick={handleSaveContact} className={styles.executiveSaveBtn}>
+              <div className={styles.executiveSaveIcon}><Plus size={14} strokeWidth={3} /></div>
+              SAVE PROFESSIONAL CONTACT
+            </button>
+
+            <div className={styles.executiveSocialRow}>
+              {client.socials?.map((social, idx) => {
+                const Icon = getSocialIcon(social.platform);
+                const color = getSocialColor(social.platform);
+                return (
+                  <a key={idx} href={social.url} target="_blank" rel="noopener noreferrer" className={styles.executiveSocialBtn}>
+                    <Icon size={22} color={color !== "currentColor" ? color : undefined} />
+                  </a>
+                );
+              })}
+            </div>
+            
+            <footer className={styles.footer} style={{ borderTop: "none", paddingTop: "1rem", marginTop: 0, paddingBottom: 0 }}>
+              <a href="/" className={styles.branding}>
+                <span style={{ opacity: 0.5, color: "var(--text-secondary)", fontSize: "0.7rem", fontWeight: "bold" }}>Powered by Just Tapp</span>
+              </a>
+            </footer>
+          </div>
+          
+          {/* QR Code Modal Overlay */}
+           {showQr && (
+             <div className={styles.modalOverlay} onClick={() => setShowQr(false)}>
+               <div className={styles.qrCard} onClick={(e) => e.stopPropagation()}>
+                 <h3>{t.shareProfile}</h3>
+                 <div className={styles.qrPlaceholder}>
+                   <div style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "1rem", background: "white", borderRadius: "8px" }}>
+                     <QRCodeCanvas value={typeof window !== "undefined" ? window.location.href : ""} size={200} bgColor={"#ffffff"} fgColor={"#000000"} level={"L"} />
+                   </div>
+                 </div>
+                 <p>{t.scanToView} {client.name}</p>
+                 <button className={styles.closeBtn} onClick={() => setShowQr(false)}>{t.close}</button>
+               </div>
+             </div>
+           )}
+           
+           {/* Language Menu */}
+           {showLangMenu && (
+             <div className={styles.langMenuOverlay} onClick={() => setShowLangMenu(false)}>
+               <div className={styles.langMenu}>
+                 {Object.entries(translations).map(([code]) => (
+                   <button key={code} className={`${styles.langOption} ${lang === code ? styles.activeLang : ""}`} onClick={() => { setLang(code); setShowLangMenu(false); }}>
+                     {code.toUpperCase()}
+                   </button>
+                 ))}
+               </div>
+             </div>
+           )}
         </div>
       ) : (
         <div
@@ -527,6 +649,7 @@ END:VCARD`;
             <div className={styles.socialGrid}>
               {client.socials?.map((social, idx) => {
                 const Icon = getSocialIcon(social.platform);
+                const color = getSocialColor(social.platform);
                 return (
                   <a
                     key={idx}
@@ -535,7 +658,7 @@ END:VCARD`;
                     rel="noopener noreferrer"
                     className={styles.socialCard}
                   >
-                    <Icon size={24} />
+                    <Icon size={28} color={color !== "currentColor" ? color : undefined} />
                     <span>{social.platform}</span>
                   </a>
                 );
