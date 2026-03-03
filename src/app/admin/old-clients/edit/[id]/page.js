@@ -17,7 +17,7 @@ export default function EditClientPage() {
 
   useEffect(() => {
     if (id) {
-      fetch(`/api/clients`)
+      fetch(`/api/clients?old=true`)
         .then((res) => res.json())
         .then((data) => {
           const found = data.find((c) => c.id == id);
