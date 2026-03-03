@@ -680,7 +680,8 @@
 
 .executiveSocialRow {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  justify-content: center;
   border-top: 1px solid var(--border-color, #f3f4f6);
   margin-top: 1rem;
   padding-top: 1rem;
@@ -688,11 +689,13 @@
 }
 
 .executiveSocialBtn {
-  flex: 1;
+  flex: 1 1 calc(20% - 0.5rem);
+  min-width: 50px;
+  max-width: 80px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
+  padding: 0.75rem 0.5rem;
   background: var(--card-bg, #f8fafc);
   color: var(--text-secondary, #4b5563);
   border-radius: 12px;

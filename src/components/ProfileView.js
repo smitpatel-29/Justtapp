@@ -407,6 +407,31 @@ END:VCARD`;
               </a>
             )}
 
+            {client.address && (
+              <div className={styles.executiveContactCard}>
+                <div className={styles.executiveIconBox}><MapPin size={18} /></div>
+                <div className={styles.executiveContactText}>
+                  <span className={styles.executiveContactLabel}>{t.address}</span>
+                  <span className={styles.executiveContactValue} style={{ fontSize: "0.85rem", whiteSpace: "normal", lineHeight: 1.3 }}>{client.address}</span>
+                </div>
+              </div>
+            )}
+
+            {client.website && (
+              <a href={client.website} target="_blank" rel="noopener noreferrer" className={styles.executiveContactCard}>
+                <div className={styles.executiveIconBox}><Globe size={18} /></div>
+                <div className={styles.executiveContactText}>
+                  <span className={styles.executiveContactLabel}>{t.website}</span>
+                  <span className={styles.executiveContactValue}>
+                    {client.website.replace(/^https?:\/\//, "").replace(/\/$/, "")}
+                  </span>
+                </div>
+                <div style={{ marginLeft: "auto", opacity: 0.3, color: "var(--text-primary)" }}>
+                  <ExternalLink size={16} />
+                </div>
+              </a>
+            )}
+
             <div style={{ flex: 1, minHeight: "2rem" }}></div>
 
             <button onClick={handleSaveContact} className={styles.executiveSaveBtn}>
