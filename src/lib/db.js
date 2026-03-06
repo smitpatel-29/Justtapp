@@ -1,9 +1,9 @@
 import Client from "@/models/Client";
 import crypto from "crypto";
 
-// Automatically sync database schema on import (safe for production if alter: true)
-// This avoids needing complex migration steps for simple deployments
-Client.sync({ alter: true }).catch((err) =>
+// Sync database: creates table if not exists, does NOT alter existing tables
+// (avoids "too many keys" errors on production with pre-created tables)
+Client.sync({ force: false }).catch((err) =>
   console.error("Database sync error:", err),
 );
 
