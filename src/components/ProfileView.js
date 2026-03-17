@@ -179,6 +179,15 @@ const languageNames = {
 };
 
 export default function ProfileView({ client }) {
+  let safeSocials = [];
+  try {
+    safeSocials = typeof client.socials === 'string' 
+      ? JSON.parse(client.socials || '[]') 
+      : (Array.isArray(client.socials) ? client.socials : []);
+  } catch(e) {
+    safeSocials = [];
+  }
+
   const [showQr, setShowQr] = useState(false);
   const [lang, setLang] = useState("en");
   const [showLangMenu, setShowLangMenu] = useState(false);
@@ -263,7 +272,14 @@ END:VCARD`;
 
   // Theme Logic
   const theme = client.theme || "dark";
-  const customTheme = client.customTheme || {};
+  let customTheme = {};
+  try {
+    customTheme = typeof client.customTheme === 'string' 
+      ? JSON.parse(client.customTheme || '{}') 
+      : (client.customTheme || {});
+  } catch(e) {
+    customTheme = {};
+  }
   const layout = client.layout || "classic";
 
   const defaultCover = "/uploads/1771247096988-coverimage.jpeg";
@@ -440,7 +456,7 @@ END:VCARD`;
             </button>
 
             <div className={styles.executiveSocialRow}>
-              {client.socials?.map((social, idx) => {
+              {safeSocials.map((social, idx) => {
                 const Icon = getSocialIcon(social.platform);
                 const color = getSocialColor(social.platform);
                 return (
@@ -672,7 +688,7 @@ END:VCARD`;
 
             <div className={styles.sectionLabel}>{t.connect}</div>
             <div className={styles.socialGrid}>
-              {client.socials?.map((social, idx) => {
+              {safeSocials.map((social, idx) => {
                 const Icon = getSocialIcon(social.platform);
                 const color = getSocialColor(social.platform);
                 return (

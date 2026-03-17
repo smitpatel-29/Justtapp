@@ -26,6 +26,15 @@ export default function ClientForm({
   const [mediaTarget, setMediaTarget] = useState(null);
   const [activeTab, setActiveTab] = useState("details");
 
+  let safeSocials = [];
+  try {
+    safeSocials = typeof initialData?.socials === 'string'
+      ? JSON.parse(initialData.socials || '[]')
+      : (Array.isArray(initialData?.socials) ? initialData.socials : []);
+  } catch (e) {
+    safeSocials = [];
+  }
+
   const [formData, setFormData] = useState({
     active: initialData?.active !== false,
     name: initialData?.name || "",
@@ -58,23 +67,22 @@ export default function ClientForm({
       initialData?.subscriptionStart || new Date().toISOString(),
     // Socials
     linkedin:
-      initialData?.socials?.find((s) => s.platform === "LinkedIn")?.url || "",
+      safeSocials.find((s) => s.platform === "LinkedIn")?.url || "",
     instagram:
-      initialData?.socials?.find((s) => s.platform === "Instagram")?.url || "",
+      safeSocials.find((s) => s.platform === "Instagram")?.url || "",
     facebook:
-      initialData?.socials?.find((s) => s.platform === "Facebook")?.url || "",
+      safeSocials.find((s) => s.platform === "Facebook")?.url || "",
     youtube:
-      initialData?.socials?.find((s) => s.platform === "Youtube")?.url || "",
+      safeSocials.find((s) => s.platform === "Youtube")?.url || "",
     whatsapp:
-      initialData?.socials?.find((s) => s.platform === "WhatsApp")?.url ||
-      "+91 ",
+      safeSocials.find((s) => s.platform === "WhatsApp")?.url || "+91 ",
     telegram:
-      initialData?.socials?.find((s) => s.platform === "Telegram")?.url || "",
+      safeSocials.find((s) => s.platform === "Telegram")?.url || "",
     twitter:
-      initialData?.socials?.find((s) => s.platform === "Twitter")?.url || "",
+      safeSocials.find((s) => s.platform === "Twitter")?.url || "",
     snapchat:
-      initialData?.socials?.find((s) => s.platform === "Snapchat")?.url || "",
-    map: initialData?.socials?.find((s) => s.platform === "Map")?.url || "",
+      safeSocials.find((s) => s.platform === "Snapchat")?.url || "",
+    map: safeSocials.find((s) => s.platform === "Map")?.url || "",
   });
 
   const handleChange = (e) => {
