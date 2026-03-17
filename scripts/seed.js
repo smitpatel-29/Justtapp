@@ -1,219 +1,159 @@
-const fs = require("fs");
-const path = require("path");
 const { Sequelize, DataTypes } = require("sequelize");
-const dotenv = require("dotenv");
-
-// Load environment variables
-dotenv.config({ path: path.join(__dirname, "../.env") });
+const path = require("path");
+require("dotenv").config();
 
 const sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USER,
-  process.env.DB_PASS,
+  process.env.DB_NAME || "database",
+  process.env.DB_USER || "user",
+  process.env.DB_PASS || "password",
   {
-    host: process.env.DB_HOST,
+    host: process.env.DB_HOST || "localhost",
+    port: parseInt(process.env.DB_PORT || "3306"),
     dialect: process.env.DB_DIALECT || "mysql",
     logging: false,
-  },
+  }
 );
 
-// Define Client Model explicitly
-const Client = sequelize.define(
-  "Client",
-  {
-    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    name: DataTypes.STRING,
-    title: DataTypes.STRING,
-    company: DataTypes.STRING,
-    bio: DataTypes.TEXT,
-    avatar: DataTypes.STRING,
-    coverImage: DataTypes.STRING,
-    email: DataTypes.STRING,
-    address: DataTypes.STRING,
-    phone: DataTypes.STRING,
-    website: DataTypes.STRING,
-    nfcId: { type: DataTypes.STRING, unique: true },
-    password: DataTypes.STRING,
-    theme: { type: DataTypes.STRING, defaultValue: "dark" },
-    customTheme: { type: DataTypes.JSON, defaultValue: {} },
-    subscriptionType: { type: DataTypes.STRING, defaultValue: "limited" },
-    subscriptionDuration: { type: DataTypes.STRING, defaultValue: "1" },
-    subscriptionStart: DataTypes.STRING,
-    active: { type: DataTypes.BOOLEAN, defaultValue: true },
-    socials: { type: DataTypes.JSON, defaultValue: [] },
-    linkedin: DataTypes.STRING,
-    instagram: DataTypes.STRING,
-    facebook: DataTypes.STRING,
-    youtube: DataTypes.STRING,
-    whatsapp: DataTypes.STRING,
-    telegram: DataTypes.STRING,
-    tiktok: DataTypes.STRING,
-    snapchat: DataTypes.STRING,
-    map: DataTypes.STRING,
-    twitter: DataTypes.STRING,
-  },
-  { timestamps: true, paranoid: true },
-);
+const Client = sequelize.define("Client", {
+  active: { type: DataTypes.BOOLEAN, defaultValue: true },
+  name: { type: DataTypes.STRING, allowNull: false },
+  title: { type: DataTypes.STRING },
+  company: { type: DataTypes.STRING },
+  bio: { type: DataTypes.TEXT },
+  avatar: { type: DataTypes.STRING },
+  coverImage: { type: DataTypes.STRING },
+  email: { type: DataTypes.STRING },
+  phone: { type: DataTypes.STRING },
+  website: { type: DataTypes.STRING },
+  socials: { type: DataTypes.TEXT },
+  nfcId: { type: DataTypes.STRING, unique: true },
+  isOldClient: { type: DataTypes.BOOLEAN, defaultValue: false },
+  customSlug: { type: DataTypes.STRING },
+  password: { type: DataTypes.STRING },
+  theme: { type: DataTypes.STRING, defaultValue: "dark" },
+  layout: { type: DataTypes.STRING, defaultValue: "classic" },
+  customTheme: { type: DataTypes.TEXT },
+});
 
 const dummyClients = [
   {
-    id: 1,
     name: "Alex Johnson",
-    title: "Senior Developer",
-    company: "Tech Solutions",
-    bio: "Full stack developer passionate about scalable systems.",
-    avatar:
-      "https://ui-avatars.com/api/?name=Alex+Johnson&background=0D8ABC&color=fff",
-    coverImage:
-      "https://images.unsplash.com/photo-1549692520-acc6669e2f0c?w=1000",
-    email: "alex@techsolutions.com",
-    address: "123 Tech Blvd, Austin, TX",
-    phone: "+15125550101",
-    website: "https://alex.dev",
-    nfcId: "nfc-001",
-    active: true,
-    socials: [{ platform: "LinkedIn", url: "https://linkedin.com" }],
+    title: "Senior Executive",
+    company: "Global Tech Solutions",
+    bio: "Passionate about innovation and sustainable tech. Over 15 years in software architecture.",
+    email: "alex.j@example.com",
+    phone: "+91 9876543210",
+    website: "https://example.com",
+    theme: "dark",
+    layout: "executive",
+    nfcId: "EX-DARK-001",
+    socials: JSON.stringify([
+      { platform: "LinkedIn", url: "https://linkedin.com/alex" },
+      { platform: "Twitter", url: "https://twitter.com/alex" }
+    ])
   },
   {
-    id: 2,
-    name: "Sarah Smith",
-    title: "UX Designer",
-    company: "Creative Studio",
-    bio: "Designing clean and intuitive user experiences.",
-    avatar:
-      "https://ui-avatars.com/api/?name=Sarah+Smith&background=E53935&color=fff",
-    coverImage:
-      "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1000",
-    email: "sarah@creative.com",
-    phone: "+15125550102",
-    website: "https://sarah.design",
-    nfcId: "nfc-002",
-    active: true,
-    socials: [{ platform: "Instagram", url: "https://instagram.com" }],
+    name: "Sarah Miller",
+    title: "Creative Director",
+    company: "Design Studio",
+    bio: "Minimalism is the ultimate sophistication. Crafting digital experiences since 2012.",
+    email: "sarah@design.studio",
+    phone: "+91 9876543211",
+    website: "https://design.studio",
+    theme: "light",
+    layout: "minimal",
+    nfcId: "MIN-LIGHT-002",
+    socials: JSON.stringify([
+      { platform: "Instagram", url: "https://instagram.com/sarah" },
+      { platform: "Facebook", url: "https://facebook.com/sarah" }
+    ])
   },
   {
-    id: 3,
+    name: "Rahul Sharma",
+    title: "Project Manager",
+    company: "BuildCorp Inc.",
+    bio: "Bridging the gap between business and technology with efficient workflows.",
+    email: "rahul@buildcorp.in",
+    phone: "+91 9876543212",
+    website: "https://buildcorp.in",
+    theme: "blue",
+    layout: "bento",
+    nfcId: "BEN-BLUE-003",
+    socials: JSON.stringify([
+      { platform: "WhatsApp", url: "https://wa.me/919876543212" },
+      { platform: "LinkedIn", url: "https://linkedin.com/rahul" }
+    ])
+  },
+  {
+    name: "Elena Petrova",
+    title: "UX Researcher",
+    company: "UserFirst Labs",
+    bio: "User behavior enthusiast. Finding the stories behind the data.",
+    email: "elena@userfirst.io",
+    phone: "+91 9876543213",
+    website: "https://userfirst.io",
+    theme: "dark",
+    layout: "modern",
+    nfcId: "MOD-DARK-004",
+    socials: JSON.stringify([
+      { platform: "LinkedIn", url: "https://linkedin.com/elena" },
+      { platform: "Youtube", url: "https://youtube.com/elena" }
+    ])
+  },
+  {
     name: "Michael Chen",
-    title: "Product Manager",
-    company: "Innovate Inc",
-    bio: "Building products that users love.",
-    avatar:
-      "https://ui-avatars.com/api/?name=Michael+Chen&background=2E7D32&color=fff",
-    coverImage:
-      "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1000",
-    email: "mike@innovate.com",
-    phone: "+15125550103",
-    website: "https://innovate.inc",
-    nfcId: "nfc-003",
-    active: true,
-    socials: [{ platform: "Twitter", url: "https://twitter.com" }],
-  },
-  {
-    id: 4,
-    name: "Emily Davis",
-    title: "Marketing Lead",
-    company: "Growth Hackers",
-    bio: "Driving growth through data-driven marketing.",
-    avatar:
-      "https://ui-avatars.com/api/?name=Emily+Davis&background=9C27B0&color=fff",
-    coverImage:
-      "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1000",
-    email: "emily@growth.com",
-    phone: "+15125550104",
-    active: true,
-    nfcId: "nfc-004",
-    socials: [],
-  },
-  {
-    id: 5,
-    name: "David Wilson",
-    title: "CTO",
-    company: "Future Tech",
-    bio: "Leading technology strategy for the future.",
-    avatar:
-      "https://ui-avatars.com/api/?name=David+Wilson&background=F57C00&color=fff",
-    coverImage:
-      "https://images.unsplash.com/photo-1504384308090-c54be3852f92?w=1000",
-    email: "david@futuretech.com",
-    phone: "+15125550105",
-    active: false, // Testing deactivated status
-    nfcId: "nfc-005",
-    socials: [],
-  },
-  {
-    id: 6,
-    name: "Robert Brown",
-    title: "Sales Director",
-    company: "Global Corp",
-    bio: "Driving revenue and building lasting partnerships.",
-    avatar:
-      "https://ui-avatars.com/api/?name=Robert+Brown&background=795548&color=fff",
-    coverImage:
-      "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1000",
-    email: "robert@globalcorp.com",
-    phone: "+15125550106",
-    active: true,
-    nfcId: "nfc-006",
-    socials: [{ platform: "LinkedIn", url: "https://linkedin.com" }],
-  },
-  {
-    id: 7,
-    name: "Jennifer Lee",
-    title: "Content Strategist",
-    company: "Media Buzz",
-    bio: "Creating compelling narratives for brands.",
-    avatar:
-      "https://ui-avatars.com/api/?name=Jennifer+Lee&background=E91E63&color=fff",
-    coverImage:
-      "https://images.unsplash.com/photo-1493612276216-ee3925520721?w=1000",
-    email: "jennifer@mediabuzz.com",
-    phone: "+15125550107",
-    active: true,
-    nfcId: "nfc-007",
-    socials: [
-      { platform: "Instagram", url: "https://instagram.com" },
-      { platform: "Twitter", url: "https://twitter.com" },
-    ],
-  },
-  {
-    id: 8,
-    name: "William Taylor",
-    title: "Operations Manager",
-    company: "FastTrack Logistics",
-    bio: "Optimizing workflows for maximum efficiency.",
-    avatar:
-      "https://ui-avatars.com/api/?name=William+Taylor&background=607D8B&color=fff",
-    coverImage:
-      "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1000",
-    email: "william@fasttrack.com",
-    phone: "+15125550108",
-    active: true,
-    nfcId: "nfc-008",
-    socials: [{ platform: "WhatsApp", url: "https://whatsapp.com" }],
-  },
+    title: "Full Stack Developer",
+    company: "Innovate.io",
+    bio: "Building robust applications with modern stacks. Obsessed with clean code.",
+    email: "michael@innovate.io",
+    phone: "+91 9876543214",
+    website: "https://innovate.io",
+    theme: "custom",
+    layout: "classic",
+    nfcId: "CLA-CUST-005",
+    customTheme: JSON.stringify({
+      background: "#1a1a1a",
+      containerBg: "#2d3436",
+      textPrimary: "#fab1a0",
+      accentColor: "#e17055",
+      buttonBg: "#d63031"
+    }),
+    socials: JSON.stringify([
+      { platform: "Github", url: "https://github.com/michael" },
+      { platform: "X", url: "https://x.com/michael" }
+    ])
+  }
 ];
 
 async function seed() {
   try {
     await sequelize.authenticate();
-    console.log("Connected to DB.");
-
-    console.log("Connected to DB.");
-
-    // Force sync to recreate table with correct schema (Integer ID + AutoIncrement)
-    await sequelize.sync({ force: true });
-    console.log("Database synced (force: true). Tables recreated.");
-
-    // Use bulkCreate for faster seeding
-    await Client.bulkCreate(dummyClients);
-
-    console.log("Seeded 5 dummy clients successfully.");
+    console.log("Connected to database.");
+    
+    // Sync without dropping existing data
+    // await Client.sync({ alter: true });
+    
+    for (const data of dummyClients) {
+      const [client, created] = await Client.findOrCreate({
+        where: { nfcId: data.nfcId },
+        defaults: data
+      });
+      
+      if (created) {
+        console.log(`Created client: ${data.name}`);
+      } else {
+        console.log(`Client ${data.name} already exists.`);
+        // Update to ensure theme/layout are applied
+        await client.update(data);
+      }
+    }
+    
+    console.log("Seeding completed successfully.");
   } catch (error) {
-    console.error("Seeding failed:", error);
+    console.error("Error seeding data:", error);
   } finally {
     await sequelize.close();
   }
 }
 
 seed();
-// Trigger deployment: Wed Feb 18 12:19:07 IST 2026
