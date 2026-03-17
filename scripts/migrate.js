@@ -18,6 +18,7 @@ const sequelize = new Sequelize(
 );
 
 // Define Client Model explicitly for migration script (avoiding import issues with ES modules)
+// Define Client Model explicitly for migration script (avoiding import issues with ES modules)
 const Client = sequelize.define(
   "Client",
   {
