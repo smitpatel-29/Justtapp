@@ -24,7 +24,7 @@ const Client = sequelize.define(
   {
     id: {
       type: DataTypes.STRING,
-      primaryKey: true,
+      primaryKey: true,   
     },
     name: DataTypes.STRING,
     title: DataTypes.STRING,
