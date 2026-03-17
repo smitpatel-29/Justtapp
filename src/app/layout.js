@@ -12,6 +12,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
+  metadataBase: new URL("https://justtapp.in"),
   title: "Just Tapp | The Future of Networking",
   description:
     "Create your digital business card and share it instantly with NFC.",

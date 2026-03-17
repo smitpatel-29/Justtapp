@@ -233,7 +233,7 @@ export default function OldClientsPage() {
                 <div className={styles.cardActions}>
                   {!showTrash && (
                     <Link
-                      href={`/${client.customSlug}`}
+                      href={`/${client.customSlug || client.nfcId || `c/${client.id}`}`}
                       target="_blank"
                       className={styles.previewLink}
                     >
