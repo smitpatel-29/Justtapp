@@ -10,37 +10,39 @@ const storage =
     ? path.join(process.cwd(), "database.sqlite")
     : undefined;
 
-const sequelize = new Sequelize(
-  process.env.DB_NAME || "database",
-  process.env.DB_USER || "user",
-  process.env.DB_PASS || "password",
-  {
-    host: process.env.DB_HOST || "localhost",
-    port: parseInt(process.env.DB_PORT || "3306"),
-    dialect: dialect,
-    dialectModule: dialect === "mysql" ? require("mysql2") : undefined,
-    storage: storage,
-    logging: isProduction ? false : console.log,
-    dialectOptions: {
-      connectTimeout: 30000,
-    },
-    pool: {
-      max: 5,
-      min: 0,
-      acquire: 30000,
-      idle: 10000,
-    },
-  },
-);
+let sequelize;
 
-// Test the connection and log result for debugging
-sequelize
-  .authenticate()
-  .then(() => {
-    console.log("✅ Database connection established successfully.");
-  })
-  .catch((err) => {
-    console.error("❌ Unable to connect to the database:", err.message);
-  });
+if (!global.__db__) {
+  global.__db__ = new Sequelize(
+    process.env.DB_NAME || "database",
+    process.env.DB_USER || "user",
+    process.env.DB_PASS || "password",
+    {
+      host: process.env.DB_HOST || "localhost",
+      port: parseInt(process.env.DB_PORT || "3306"),
+      dialect: dialect,
+      dialectModule: dialect === "mysql" ? require("mysql2") : undefined,
+      storage: storage,
+      logging: isProduction ? false : console.log,
+      dialectOptions: {
+        connectTimeout: 30000,
+      },
+      pool: {
+        max: 3, // Very low max to prevent choking low-resource hostinger
+        min: 0,
+        acquire: 30000,
+        idle: 5000, // Drop idle connections quickly to free up RAM
+      },
+    }
+  );
+
+  // Quick connectivity test
+  global.__db__
+    .authenticate()
+    .then(() => console.log("✅ Database connected."))
+    .catch((err) => console.error("❌ DB connection error:", err.message));
+}
+
+sequelize = global.__db__;
 
 export default sequelize;

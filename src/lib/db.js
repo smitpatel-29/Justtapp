@@ -1,38 +1,40 @@
 import Client from "@/models/Client";
-import crypto from "crypto";
-
-// Sync database: creates table if not exists, does NOT alter existing tables
-// (avoids "too many keys" errors on production with pre-created tables)
-Client.sync({ force: false }).catch((err) =>
-  console.error("Database sync error:", err),
-);
-
 import Admin from "@/models/Admin";
+import crypto from "crypto";
 
 export function hashPassword(password) {
   return crypto.createHash("sha256").update(password).digest("hex");
 }
 
-Admin.sync({ force: false })
-  .then(async () => {
-    try {
-      const admin = await Admin.findOne({ where: { username: "Admin" } });
-      if (!admin) {
-        await Admin.create({
-          username: "Admin",
-          password: hashPassword("Admin!@2026"),
-        });
-        console.log("Default Admin created.");
+// Sync database only once per server lifetime to avoid crushing Hostinger CPU
+if (!global.__db_synced__) {
+  global.__db_synced__ = true;
+
+  Client.sync({ force: false }).catch((err) =>
+    console.error("Database sync error:", err),
+  );
+
+  Admin.sync({ force: false })
+    .then(async () => {
+      try {
+        const admin = await Admin.findOne({ where: { username: "Admin" } });
+        if (!admin) {
+          await Admin.create({
+            username: "Admin",
+            password: hashPassword("Admin!@2026"),
+          });
+          console.log("Default Admin created.");
+        }
+      } catch (err) {
+        if (err.name !== 'SequelizeUniqueConstraintError') {
+          console.error("Admin seeding error:", err);
+        }
       }
-    } catch (err) {
-      if (err.name !== 'SequelizeUniqueConstraintError') {
-        console.error("Admin seeding error:", err);
-      }
-    }
-  })
-  .catch((err) => {
-    console.error("Admin table sync error:", err);
-  });
+    })
+    .catch((err) => {
+      console.error("Admin table sync error:", err);
+    });
+}
 
 import { Op } from "sequelize";
 
