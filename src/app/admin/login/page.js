@@ -27,11 +27,15 @@ export default function AdminLogin() {
         router.refresh(); // Refresh to update middleware state
         router.push("/admin");
       } else {
-        const data = await res.json();
-        setError(data.error || "Login failed");
+        try {
+          const data = await res.json();
+          setError(data.error || "Login failed");
+        } catch (e) {
+          setError("Invalid credentials or server unavailable");
+        }
       }
     } catch (err) {
-      setError("An error occurred");
+      setError("Network connection failed.");
     } finally {
       setLoading(false);
     }

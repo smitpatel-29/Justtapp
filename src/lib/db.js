@@ -13,22 +13,26 @@ export function hashPassword(password) {
   return crypto.createHash("sha256").update(password).digest("hex");
 }
 
-Admin.sync({ force: false }).then(async () => {
-  try {
-    const admin = await Admin.findOne({ where: { username: "Admin" } });
-    if (!admin) {
-      await Admin.create({
-        username: "Admin",
-        password: hashPassword("Admin!@2026"),
-      });
-      console.log("Default Admin created.");
+Admin.sync({ force: false })
+  .then(async () => {
+    try {
+      const admin = await Admin.findOne({ where: { username: "Admin" } });
+      if (!admin) {
+        await Admin.create({
+          username: "Admin",
+          password: hashPassword("Admin!@2026"),
+        });
+        console.log("Default Admin created.");
+      }
+    } catch (err) {
+      if (err.name !== 'SequelizeUniqueConstraintError') {
+        console.error("Admin seeding error:", err);
+      }
     }
-  } catch (err) {
-    if (err.name !== 'SequelizeUniqueConstraintError') {
-      console.error("Admin sync error:", err);
-    }
-  }
-});
+  })
+  .catch((err) => {
+    console.error("Admin table sync error:", err);
+  });
 
 import { Op } from "sequelize";
 
