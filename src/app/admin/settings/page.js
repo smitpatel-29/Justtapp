@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import AdminLayout from "@/components/AdminLayout";
-import { User, Lock, Globe, Database, Save, Plus, Trash2, Calendar, Users } from "lucide-react";
+import { User, Lock, Globe, Database, Save, Plus, Trash2, Calendar, Users, LogOut } from "lucide-react";
 import styles from "./SettingsPage.module.css";
 
 export default function SettingsPage() {
@@ -11,6 +12,7 @@ export default function SettingsPage() {
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
+  const router = useRouter();
 
   const [siteSettings, setSiteSettings] = useState({
     siteTitle: "Just Tapp Admin",
@@ -95,6 +97,15 @@ export default function SettingsPage() {
   const handleSaveSite = (e) => {
     e.preventDefault();
     alert("Site settings saved! (Demo)");
+  };
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/admin/logout", { method: "POST" });
+      router.push("/admin/login");
+    } catch (err) {
+      console.error("Failed to log out", err);
+    }
   };
 
   return (
@@ -232,6 +243,26 @@ export default function SettingsPage() {
             <span className={styles.infoValue}>
               {currentTime || "Loading..."}
             </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Account Actions Section */}
+      <div className={styles.section} style={{ borderColor: 'rgba(239, 68, 68, 0.2)' }}>
+        <div className={styles.sectionHeader} style={{ borderBottom: 'none', paddingBottom: 0, marginBottom: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", justifyContent: "space-between", width: "100%" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+              <LogOut size={24} color="#ef4444" />
+              <div>
+                <h2 className={styles.sectionTitle} style={{ color: "#ef4444" }}>Account Actions</h2>
+                <p className={styles.sectionDesc}>
+                  Securely log out of your Just Tapp admin session.
+                </p>
+              </div>
+            </div>
+            <button onClick={handleLogout} className={styles.btnLogout} style={{ width: 'auto', marginTop: 0 }}>
+              <LogOut size={18} /> Log Out
+            </button>
           </div>
         </div>
       </div>
