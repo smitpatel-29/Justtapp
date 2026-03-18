@@ -62,15 +62,7 @@ export default function AdminLayout({ children, title, actions }) {
             <Archive size={20} />
             Old Clients
           </Link>
-          <Link
-            href="/admin/admins"
-            className={`${styles.navItem} ${
-              pathname.startsWith("/admin/admins") ? styles.navItemActive : ""
-            }`}
-          >
-            <Users size={20} />
-            Manage Admins
-          </Link>
+
           <Link
             href="/admin/media"
             className={`${styles.navItem} ${
