@@ -236,6 +236,45 @@ END:VCARD`;
     }
   };
 
+  const formatSocialUrl = (platform, url) => {
+    if (!url) return "#";
+    const p = platform.toLowerCase();
+    let formattedPath = url.trim();
+
+    if (formattedPath.startsWith("http://") || formattedPath.startsWith("https://")) {
+      return formattedPath;
+    }
+
+    if (p.includes("whatsapp")) {
+      const number = formattedPath.replace(/[^\d+]/g, "");
+      return `https://wa.me/${number.replace("+", "")}`;
+    }
+    if (p.includes("instagram")) {
+      return `https://instagram.com/${formattedPath.replace("@", "")}`;
+    }
+    if (p.includes("twitter") || p.includes("x")) {
+      return `https://twitter.com/${formattedPath.replace("@", "")}`;
+    }
+    if (p.includes("tiktok")) {
+      return `https://tiktok.com/@${formattedPath.replace("@", "")}`;
+    }
+    if (p.includes("telegram")) {
+      return `https://t.me/${formattedPath.replace("@", "")}`;
+    }
+    if (p.includes("snapchat")) {
+      return `https://snapchat.com/add/${formattedPath.replace("@", "")}`;
+    }
+    if (p.includes("linkedin") && !formattedPath.includes("linkedin.com")) {
+      return `https://linkedin.com/in/${formattedPath}`;
+    }
+
+    if (!formattedPath.startsWith("http")) {
+      return `https://${formattedPath}`;
+    }
+
+    return formattedPath;
+  };
+
   const getSocialIcon = (platform) => {
     if (!platform) return Globe;
     const p = platform.toLowerCase();
@@ -460,7 +499,7 @@ END:VCARD`;
                 const Icon = getSocialIcon(social.platform);
                 const color = getSocialColor(social.platform);
                 return (
-                  <a key={idx} href={social.url} target="_blank" rel="noopener noreferrer" className={styles.executiveSocialBtn}>
+                  <a key={idx} href={formatSocialUrl(social.platform, social.url)} target="_blank" rel="noopener noreferrer" className={styles.executiveSocialBtn}>
                     <Icon size={22} color={color !== "currentColor" ? color : undefined} />
                   </a>
                 );
@@ -694,7 +733,7 @@ END:VCARD`;
                 return (
                   <a
                     key={idx}
-                    href={social.url}
+                    href={formatSocialUrl(social.platform, social.url)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={styles.socialCard}
