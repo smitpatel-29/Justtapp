@@ -3,8 +3,8 @@ import { NextResponse } from "next/server";
 export function middleware(request) {
   const path = request.nextUrl.pathname;
 
-  // Protect /admin routes
-  if (path.startsWith("/admin")) {
+  // Protect /admin and sensitive /api routes
+  if (path.startsWith("/admin") || path.startsWith("/api/admins")) {
     // Exclude /admin/login from protection
     if (path === "/admin/login") {
       return NextResponse.next();
@@ -14,6 +14,10 @@ export function middleware(request) {
     const token = request.cookies.get("admin_token")?.value;
 
     if (!token) {
+      if (path.startsWith("/api/")) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+      
       // Redirect to login
       const loginUrl = new URL("/admin/login", request.url);
       return NextResponse.redirect(loginUrl);
@@ -24,5 +28,5 @@ export function middleware(request) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/api/admins/:path*"],
 };

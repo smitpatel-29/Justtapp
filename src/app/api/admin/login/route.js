@@ -1,15 +1,13 @@
 import { NextResponse } from "next/server";
+import { loginAdmin } from "@/lib/db";
 
 export async function POST(request) {
   try {
     const { username, password } = await request.json();
 
-    // In a real app, use environment variables or a database
-    // For now, hardcoded credentials as requested
-    const ADMIN_USER = "Admin";
-    const ADMIN_PASS = "Admin123";
+    const isValid = await loginAdmin(username, password);
 
-    if (username === ADMIN_USER && password === ADMIN_PASS) {
+    if (isValid) {
       // Create a response
       const response = NextResponse.json({ success: true }, { status: 200 });
 
