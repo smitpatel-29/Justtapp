@@ -19,7 +19,7 @@ Admin.sync({ force: false }).then(async () => {
     if (!admin) {
       await Admin.create({
         username: "Admin",
-        password: hashPassword("Admin123"),
+        password: hashPassword("Admin!@2026"),
       });
       console.log("Default Admin created.");
     }
