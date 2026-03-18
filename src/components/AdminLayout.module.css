@@ -22,10 +22,16 @@
 }
 
 .logo {
-  margin-bottom: 2.5rem;
-  padding-left: 0.5rem;
   display: flex;
   align-items: center;
+}
+
+.sidebarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.5rem;
+  padding-left: 0.5rem;
 }
 
 .nav {
@@ -222,4 +228,118 @@
 }
 .btnDanger:hover {
   background: rgba(239, 68, 68, 0.2);
+}
+
+/* --- Mobile Nav Components --- */
+.mobileNavHeader {
+  display: none; /* hidden on desktop */
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.mobileMenuBtn {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.mobileTitle {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: white;
+}
+
+.mobileCloseBtn {
+  display: none;
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 8px;
+}
+
+.mobileOverlay {
+  display: none; /* hidden on desktop */
+}
+
+/* --- Responsive Media Queries --- */
+@media (max-width: 1024px) {
+  .layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    position: fixed;
+    left: -280px;
+    width: 260px;
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: none;
+  }
+  
+  .sidebarOpen {
+    left: 0;
+    box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+  }
+
+  .mobileNavHeader {
+    display: flex;
+  }
+
+  .mobileCloseBtn {
+    display: flex;
+    align-items: center;
+  }
+
+  .mobileOverlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 40;
+  }
+
+  .mainContent {
+    padding: 1.5rem;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+  
+  .headerActions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 640px) {
+  .mainContent {
+    padding: 1rem;
+  }
+  
+  .headerActions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  
+  .userProfileContainer {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+  }
 }

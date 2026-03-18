@@ -1,4 +1,5 @@
 "use client";
+import React, { useState } from "react";
 import styles from "./AdminLayout.module.css";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -8,11 +9,14 @@ import {
   Image as ImageIcon,
   Settings,
   Archive,
+  Menu,
+  X
 } from "lucide-react";
 
 export default function AdminLayout({ children, title, actions }) {
   const pathname = usePathname();
   const router = useRouter();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleLogout = async () => {
     await fetch("/api/admin/logout", { method: "POST" });
@@ -23,13 +27,29 @@ export default function AdminLayout({ children, title, actions }) {
 
   return (
     <div className={styles.layout}>
-      <aside className={styles.sidebar}>
-        <div className={styles.logo}>
-          <img
-            src="/assets/logo-white.png"
-            alt="Just Tapp"
-            style={{ height: "60px", maxWidth: "100%", width: "auto" }}
-          />
+      {/* Mobile Overlay */}
+      {isMobileMenuOpen && (
+        <div 
+          className={styles.mobileOverlay} 
+          onClick={() => setIsMobileMenuOpen(false)} 
+        />
+      )}
+
+      <aside className={`${styles.sidebar} ${isMobileMenuOpen ? styles.sidebarOpen : ""}`}>
+        <div className={styles.sidebarHeader}>
+          <div className={styles.logo}>
+            <img
+              src="/assets/logo-white.png"
+              alt="Just Tapp"
+              style={{ height: "60px", maxWidth: "100%", width: "auto" }}
+            />
+          </div>
+          <button 
+            className={styles.mobileCloseBtn}
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            <X size={24} />
+          </button>
         </div>
 
         <nav className={styles.nav}>
@@ -85,6 +105,17 @@ export default function AdminLayout({ children, title, actions }) {
       </aside>
 
       <main className={styles.mainContent}>
+        <div className={styles.mobileNavHeader}>
+          <button 
+            className={styles.mobileMenuBtn} 
+            onClick={() => setIsMobileMenuOpen(true)}
+          >
+            <Menu size={24} />
+          </button>
+          {/* Add a tiny logo or title for the mobile bar if desired */}
+          <div className={styles.mobileTitle}>Just Tapp Admin</div>
+        </div>
+
         {title && (
           <header className={styles.header}>
             <h1 className={styles.pageTitle}>{title}</h1>

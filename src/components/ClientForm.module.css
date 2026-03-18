@@ -324,3 +324,30 @@
   background: rgba(255, 255, 255, 0.05);
   border-radius: 4px;
 }
+
+/* --- Responsive Media Queries --- */
+@media (max-width: 768px) {
+  .formGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .themeGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .pageBtnGroup {
+    flex-direction: column;
+  }
+  
+  .btnCancel, .btnSave {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .themeGrid {
+    grid-template-columns: 1fr;
+  }
+}
